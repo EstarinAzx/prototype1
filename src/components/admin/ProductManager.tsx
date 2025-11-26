@@ -5,6 +5,50 @@ import { storage } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { type Item } from '../../data/items';
 
+const compressProductImage = async (file: File): Promise<Blob> => {
+    return new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+            console.warn('Image compression timed out, using original file');
+            resolve(file);
+        }, 10000);
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            clearTimeout(timeout);
+            resolve(file);
+            return;
+        }
+        const img = new Image();
+        img.onload = () => {
+            try {
+                clearTimeout(timeout);
+                const maxWidth = 500;
+                let { width, height } = img;
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(
+                    (blob) => resolve(blob || file),
+                    'image/jpeg',
+                    0.8
+                );
+            } catch {
+                resolve(file);
+            }
+        };
+        img.onerror = () => {
+            clearTimeout(timeout);
+            resolve(file);
+        };
+        img.src = URL.createObjectURL(file);
+    });
+};
+
 export const ProductManager: React.FC = () => {
     const { items, addProduct, deleteProduct, updateProduct } = useStore();
     const [showForm, setShowForm] = useState(false);
@@ -71,8 +115,9 @@ export const ProductManager: React.FC = () => {
 
             // 1. Upload new image if selected
             if (imageFile) {
+                const compressedBlob = await compressProductImage(imageFile);
                 const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
-                const snapshot = await uploadBytes(storageRef, imageFile);
+                const snapshot = await uploadBytes(storageRef, compressedBlob);
                 imageUrl = await getDownloadURL(snapshot.ref);
             }
 

@@ -89,27 +89,53 @@ export const Login: React.FC = () => {
     // RENDER / UI
     // ============================================
     return (
-        <div className="app-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
-            {/* Cyberpunk visual effects overlays */}
-            <div className="crt-overlay"></div>
-            <div className="scanline"></div>
+        <div style={{
+            width: '100vw',
+            height: '100vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            background: 'linear-gradient(135deg, #0a0a0f 0%, #0d1520 50%, #0a0a0f 100%)',
+            position: 'relative',
+            overflow: 'hidden'
+        }}>
+            {/* Background grid effect */}
+            <div style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px)',
+                backgroundSize: '50px 50px',
+                pointerEvents: 'none'
+            }} />
+            
+            {/* Radial glow */}
+            <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '600px',
+                height: '600px',
+                background: 'radial-gradient(circle, rgba(0,240,255,0.08) 0%, transparent 70%)',
+                pointerEvents: 'none'
+            }} />
 
             {/* ============================================
                 ANIMATED LOGIN FORM CONTAINER
                 ============================================ */}
             <motion.div
-                // Zoom-in animation on mount
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 style={{
                     background: 'rgba(10, 10, 10, 0.95)',
-                    border: '2px solid #00f3ff',
+                    border: '2px solid #00f0ff',
                     padding: '40px',
                     width: '100%',
                     maxWidth: '450px',
                     position: 'relative',
-                    // Cyberpunk angled corners using clip-path
-                    clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)'
+                    clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)',
+                    boxShadow: '0 0 40px rgba(0,240,255,0.2), inset 0 0 20px rgba(0,240,255,0.05)',
+                    zIndex: 1
                 }}
             >
                 {/* ============================================
@@ -203,7 +229,33 @@ export const Login: React.FC = () => {
                         SUBMIT BUTTON
                         Text changes based on login/signup mode
                         ============================================ */}
-                    <button className="cyber-btn" style={{ marginTop: '10px' }}>
+                    <button
+                        type="submit"
+                        style={{
+                            width: '100%',
+                            marginTop: '10px',
+                            padding: '15px',
+                            background: 'linear-gradient(180deg, #00f0ff 0%, #0099aa 100%)',
+                            border: 'none',
+                            color: '#000',
+                            fontFamily: 'Orbitron, sans-serif',
+                            fontSize: '1rem',
+                            fontWeight: 700,
+                            letterSpacing: '3px',
+                            cursor: 'pointer',
+                            clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
+                            transition: 'all 0.3s',
+                            boxShadow: '0 0 20px rgba(0,240,255,0.3)'
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.boxShadow = '0 0 30px rgba(0,240,255,0.5)';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.boxShadow = '0 0 20px rgba(0,240,255,0.3)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                    >
                         {isLogin ? 'ESTABLISH LINK' : 'INITIALIZE NEW ID'}
                     </button>
                 </form>

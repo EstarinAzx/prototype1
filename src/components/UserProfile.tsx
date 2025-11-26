@@ -13,20 +13,49 @@ import { db } from '../firebase';
 
 const compressImage = async (file: File): Promise<Blob> => {
     return new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+            console.warn('Image compression timed out, using original file');
+            resolve(file);
+        }, 10000);
+
         const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d')!;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            clearTimeout(timeout);
+            resolve(file);
+            return;
+        }
         const img = new Image();
         img.onload = () => {
-            const maxWidth = 300;
-            let { width, height } = img;
-            if (width > maxWidth) {
-                height = (height * maxWidth) / width;
-                width = maxWidth;
+            try {
+                clearTimeout(timeout);
+                const maxWidth = 300;
+                let { width, height } = img;
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob) {
+                            resolve(blob);
+                        } else {
+                            resolve(file);
+                        }
+                    },
+                    'image/jpeg',
+                    0.7
+                );
+            } catch (err) {
+                resolve(file);
             }
-            canvas.width = width;
-            canvas.height = height;
-            ctx.drawImage(img, 0, 0, width, height);
-            canvas.toBlob((blob) => resolve(blob!), 'image/jpeg', 0.7);
+        };
+        img.onerror = () => {
+            clearTimeout(timeout);
+            resolve(file);
         };
         img.src = URL.createObjectURL(file);
     });
