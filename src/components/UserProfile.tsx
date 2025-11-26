@@ -27,47 +27,37 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
 
     if (!user) return null;
 
-    // Track if any changes have been made
-    const hasChanges = 
-        bioText !== user.profile.bio || 
-        selectedAvatar !== user.profile.avatar || 
+    const hasChanges =
+        bioText !== user.profile.bio ||
+        selectedAvatar !== user.profile.avatar ||
         selectedFile !== null;
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            // Validate file type
             if (!file.type.startsWith('image/')) {
                 showNotification('Please select a valid image file', 'error');
                 return;
             }
-            // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
                 showNotification('File size must be less than 5MB', 'error');
                 return;
             }
             setSelectedFile(file);
-            // Create preview URL
-            const previewUrl = URL.createObjectURL(file);
-            setUploadedAvatarUrl(previewUrl);
+            setUploadedAvatarUrl(URL.createObjectURL(file));
         }
     };
 
     const saveChanges = async () => {
         if (!user.uid) return;
-        
         setIsSaving(true);
         try {
             let avatarUrl = user.profile.avatarUrl;
-
-            // Upload file to Firebase Storage if a new file was selected
             if (selectedFile) {
                 const storageRef = ref(storage, `avatars/${user.uid}`);
                 await uploadBytes(storageRef, selectedFile);
                 avatarUrl = await getDownloadURL(storageRef);
             }
-
-            // Update Firestore profile
             const userDocRef = doc(db, 'users', user.uid);
             const updates: any = {
                 'profile.bio': bioText,
@@ -76,16 +66,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
             if (avatarUrl) {
                 updates['profile.avatarUrl'] = avatarUrl;
             }
-
             await updateDoc(userDocRef, updates);
-
-            // Update local state
             await updateProfile(selectedAvatar, bioText, avatarUrl);
-            
-            // Reset state
             setSelectedFile(null);
             setIsEditingBio(false);
-            
             showNotification('Profile updated successfully!', 'success');
         } catch (error: any) {
             console.error('Error updating profile:', error);
@@ -99,100 +83,123 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
     const currentAvatar = avatars.find(a => a.id === user.profile.avatar) || avatars[0];
     const xpProgress = (user.profile.xp % 1000) / 1000 * 100;
 
-    return createPortal(
+    const modalContent = (
         <div style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.9)',
-            zIndex: 2000,
+            inset: 0,
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(5,10,15,0.98) 100%)',
+            zIndex: 9999,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backdropFilter: 'blur(5px)'
+            backdropFilter: 'blur(10px)'
         }}>
+            <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'radial-gradient(ellipse at center, rgba(0,240,255,0.03) 0%, transparent 70%)',
+                pointerEvents: 'none'
+            }} />
+            
             <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 style={{
                     width: '95%',
-                    maxWidth: '900px',
-                    maxHeight: '90%',
-                    background: 'rgba(10, 10, 10, 0.95)',
-                    border: '1px solid #4ade80',
-                    boxShadow: '0 0 50px rgba(74, 222, 128, 0.15), inset 0 0 20px rgba(74, 222, 128, 0.05)',
+                    maxWidth: '950px',
+                    maxHeight: '90vh',
+                    background: 'linear-gradient(180deg, rgba(8,12,18,0.98) 0%, rgba(5,8,12,0.99) 100%)',
+                    border: '1px solid #00f0ff',
+                    boxShadow: '0 0 60px rgba(0,240,255,0.2), 0 0 120px rgba(0,240,255,0.1), inset 0 1px 0 rgba(0,240,255,0.1)',
                     display: 'flex',
                     flexDirection: 'column',
                     position: 'relative',
-                    clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)',
+                    clipPath: 'polygon(0 0, calc(100% - 25px) 0, 100% 25px, 100% 100%, 25px 100%, 0 calc(100% - 25px))',
                     overflow: 'hidden'
                 }}
             >
-                {/* Decorative Corner Lines */}
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '100px', height: '2px', background: '#4ade80', boxShadow: '0 0 10px #4ade80' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '2px', height: '100px', background: '#4ade80', boxShadow: '0 0 10px #4ade80' }} />
-                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '100px', height: '2px', background: '#4ade80', boxShadow: '0 0 10px #4ade80' }} />
-                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '2px', height: '100px', background: '#4ade80', boxShadow: '0 0 10px #4ade80' }} />
+                {/* Animated scan line */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent, #00f0ff, transparent)',
+                    animation: 'scan 3s linear infinite',
+                    opacity: 0.5,
+                    pointerEvents: 'none'
+                }} />
+
+                {/* Corner accents */}
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '80px', height: '3px', background: 'linear-gradient(90deg, #00f0ff, transparent)', boxShadow: '0 0 15px #00f0ff' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '3px', height: '80px', background: 'linear-gradient(180deg, #00f0ff, transparent)', boxShadow: '0 0 15px #00f0ff' }} />
+                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '80px', height: '3px', background: 'linear-gradient(270deg, #00f0ff, transparent)', boxShadow: '0 0 15px #00f0ff' }} />
+                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '3px', height: '80px', background: 'linear-gradient(0deg, #00f0ff, transparent)', boxShadow: '0 0 15px #00f0ff' }} />
+
                 {/* Header */}
                 <div style={{
-                    padding: '20px 30px',
-                    borderBottom: '2px solid #4ade80',
+                    padding: '25px 35px',
+                    borderBottom: '1px solid rgba(0,240,255,0.3)',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    background: 'rgba(74, 222, 128, 0.05)'
+                    background: 'linear-gradient(180deg, rgba(0,240,255,0.08) 0%, transparent 100%)',
+                    position: 'relative'
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
                         <div style={{
-                            width: '80px',
-                            height: '80px',
-                            border: `3px solid ${currentAvatar.color}`,
+                            width: '90px',
+                            height: '90px',
                             borderRadius: '50%',
+                            border: `3px solid ${currentAvatar.color}`,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '3rem',
-                            background: `rgba(${hexToRgb(currentAvatar.color)}, 0.1)`,
-                            boxShadow: `0 0 20px ${currentAvatar.color}40`,
+                            fontSize: '3.5rem',
+                            background: `radial-gradient(circle, rgba(${hexToRgb(currentAvatar.color)}, 0.2) 0%, transparent 70%)`,
+                            boxShadow: `0 0 30px ${currentAvatar.color}50, inset 0 0 20px ${currentAvatar.color}20`,
                             backgroundImage: uploadedAvatarUrl || user.profile.avatarUrl ? `url(${uploadedAvatarUrl || user.profile.avatarUrl})` : 'none',
                             backgroundSize: 'cover',
-                            backgroundPosition: 'center'
+                            backgroundPosition: 'center',
+                            position: 'relative'
                         }}>
                             {!uploadedAvatarUrl && !user.profile.avatarUrl && currentAvatar.icon}
+                            <div style={{
+                                position: 'absolute',
+                                inset: -3,
+                                borderRadius: '50%',
+                                border: `1px solid ${currentAvatar.color}`,
+                                opacity: 0.3
+                            }} />
                         </div>
                         <div>
                             <h1 style={{
-                                fontFamily: 'Orbitron',
-                                color: '#4ade80',
-                                fontSize: '1.8rem',
-                                letterSpacing: '2px',
-                                marginBottom: '5px'
+                                fontFamily: 'Orbitron, sans-serif',
+                                fontSize: '2rem',
+                                color: '#00f0ff',
+                                letterSpacing: '3px',
+                                marginBottom: '8px',
+                                textShadow: '0 0 20px rgba(0,240,255,0.5)'
                             }}>
                                 {user.username.toUpperCase()}
                             </h1>
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '10px'
-                            }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <span style={{
-                                    background: currentAvatar.color,
+                                    background: `linear-gradient(135deg, ${currentAvatar.color}, ${currentAvatar.color}aa)`,
                                     color: '#000',
-                                    padding: '4px 12px',
-                                    fontFamily: 'Orbitron',
-                                    fontSize: '0.8rem',
-                                    fontWeight: 'bold'
+                                    padding: '5px 15px',
+                                    fontFamily: 'Orbitron, sans-serif',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 'bold',
+                                    letterSpacing: '1px',
+                                    clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'
                                 }}>
                                     LVL {user.profile.level}
                                 </span>
-                                <span style={{
-                                    color: '#666',
-                                    fontFamily: 'Rajdhani',
-                                    fontSize: '0.9rem'
-                                }}>
+                                <span style={{ color: '#888', fontFamily: 'Rajdhani, sans-serif', fontSize: '1rem' }}>
                                     {currentAvatar.name}
                                 </span>
                             </div>
@@ -201,11 +208,25 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     <button
                         onClick={onClose}
                         style={{
-                            background: 'transparent',
+                            background: 'rgba(255,0,85,0.1)',
                             border: '1px solid #ff0055',
                             color: '#ff0055',
-                            padding: '8px',
-                            cursor: 'pointer'
+                            width: '40px',
+                            height: '40px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)'
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.background = 'rgba(255,0,85,0.3)';
+                            e.currentTarget.style.boxShadow = '0 0 20px rgba(255,0,85,0.4)';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.background = 'rgba(255,0,85,0.1)';
+                            e.currentTarget.style.boxShadow = 'none';
                         }}
                     >
                         <X size={20} />
@@ -213,38 +234,35 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                 </div>
 
                 {/* Content */}
-                <div style={{
-                    flex: 1,
-                    overflow: 'auto',
-                    padding: '30px'
-                }}>
+                <div style={{ flex: 1, overflow: 'auto', padding: '30px 35px' }}>
                     {/* XP Progress */}
-                    <div style={{ marginBottom: '30px' }}>
+                    <div style={{ marginBottom: '35px' }}>
                         <div style={{
                             display: 'flex',
                             justifyContent: 'space-between',
-                            marginBottom: '8px',
-                            fontFamily: 'Orbitron',
-                            fontSize: '0.85rem',
-                            color: '#4ade80'
+                            marginBottom: '10px',
+                            fontFamily: 'Orbitron, sans-serif',
+                            fontSize: '0.8rem',
+                            color: '#00f0ff'
                         }}>
-                            <span>EXPERIENCE</span>
-                            <span>{user.profile.xp} XP</span>
+                            <span style={{ textShadow: '0 0 10px rgba(0,240,255,0.5)' }}>EXPERIENCE POINTS</span>
+                            <span>{user.profile.xp} / {(user.profile.level) * 1000} XP</span>
                         </div>
                         <div style={{
                             width: '100%',
-                            height: '8px',
-                            background: '#222',
-                            border: '1px solid #4ade80',
+                            height: '10px',
+                            background: 'rgba(0,240,255,0.1)',
+                            border: '1px solid rgba(0,240,255,0.3)',
                             position: 'relative',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            clipPath: 'polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%)'
                         }}>
                             <div style={{
                                 width: `${xpProgress}%`,
                                 height: '100%',
-                                background: 'linear-gradient(90deg, #4ade80, #00ff00)',
-                                boxShadow: '0 0 10px #4ade80',
-                                transition: 'width 0.3s ease'
+                                background: 'linear-gradient(90deg, #00f0ff, #00ff88)',
+                                boxShadow: '0 0 20px #00f0ff, inset 0 0 10px rgba(255,255,255,0.3)',
+                                transition: 'width 0.5s ease'
                             }} />
                         </div>
                     </div>
@@ -252,89 +270,78 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     {/* Stats Grid */}
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
                         gap: '15px',
-                        marginBottom: '30px'
+                        marginBottom: '35px'
                     }}>
                         <StatCard label="CREDITS" value={`¥${user.credits.toLocaleString()}`} color="#ffe600" />
-                        <StatCard label="ITEMS OWNED" value={user.inventory.length.toString()} color="#4ade80" />
-                        <StatCard label="TRANSACTIONS" value={(user as any).transactions?.length || 0} color="#ff0055" />
+                        <StatCard label="ITEMS OWNED" value={user.inventory.length.toString()} color="#00f0ff" />
+                        <StatCard label="TRANSACTIONS" value={String((user as any).transactions?.length || 0)} color="#ff0055" />
                         <StatCard label="DAYS ACTIVE" value={daysSinceJoined.toString()} color="#a855f7" />
                     </div>
 
                     {/* Avatar Selection */}
-                    <div style={{ marginBottom: '30px' }}>
+                    <div style={{ marginBottom: '35px' }}>
                         <h3 style={{
-                            fontFamily: 'Orbitron',
-                            color: '#4ade80',
-                            fontSize: '1.2rem',
-                            marginBottom: '15px',
-                            borderBottom: '1px solid rgba(74, 222, 128, 0.3)',
-                            paddingBottom: '10px'
+                            fontFamily: 'Orbitron, sans-serif',
+                            color: '#00f0ff',
+                            fontSize: '1rem',
+                            marginBottom: '20px',
+                            paddingBottom: '10px',
+                            borderBottom: '1px solid rgba(0,240,255,0.2)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            textShadow: '0 0 10px rgba(0,240,255,0.3)'
                         }}>
-                            SELECT AVATAR
+                            <span style={{ color: '#00f0ff' }}>◆</span> SELECT AVATAR
                         </h3>
-                        
-                        {/* File Upload Section */}
-                        <div style={{ marginBottom: '20px' }}>
-                            <label style={{
-                                display: 'inline-flex',
-                                background: 'rgba(74, 222, 128, 0.1)',
-                                border: '1px solid #4ade80',
-                                color: '#4ade80',
-                                padding: '12px 24px',
-                                fontFamily: 'Orbitron',
-                                fontSize: '0.9rem',
-                                cursor: 'pointer',
-                                clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
-                                transition: 'all 0.3s ease',
-                                alignItems: 'center',
-                                gap: '10px',
-                                width: 'fit-content'
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(74, 222, 128, 0.2)';
-                                e.currentTarget.style.boxShadow = '0 0 20px rgba(74, 222, 128, 0.3)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'rgba(74, 222, 128, 0.1)';
-                                e.currentTarget.style.boxShadow = 'none';
-                            }}
-                            >
-                                <Upload size={18} />
-                                UPLOAD CUSTOM AVATAR
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                    style={{ display: 'none' }}
-                                />
-                            </label>
-                            {selectedFile && (
-                                <div style={{
-                                    marginTop: '10px',
-                                    fontFamily: 'Rajdhani',
-                                    fontSize: '0.9rem',
-                                    color: '#4ade80'
-                                }}>
-                                    Selected: {selectedFile.name}
-                                </div>
-                            )}
-                        </div>
 
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
-                            gap: '15px'
+                        {/* Upload Button */}
+                        <label style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            background: 'linear-gradient(135deg, rgba(0,240,255,0.1) 0%, rgba(0,240,255,0.05) 100%)',
+                            border: '1px solid #00f0ff',
+                            color: '#00f0ff',
+                            padding: '12px 25px',
+                            fontFamily: 'Orbitron, sans-serif',
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            marginBottom: '20px',
+                            transition: 'all 0.3s ease',
+                            clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)'
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.background = 'rgba(0,240,255,0.2)';
+                            e.currentTarget.style.boxShadow = '0 0 25px rgba(0,240,255,0.4)';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,240,255,0.1) 0%, rgba(0,240,255,0.05) 100%)';
+                            e.currentTarget.style.boxShadow = 'none';
                         }}>
+                            <Upload size={16} />
+                            UPLOAD CUSTOM AVATAR
+                            <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+                        </label>
+                        {selectedFile && (
+                            <div style={{ marginTop: '-10px', marginBottom: '20px', fontFamily: 'Rajdhani, sans-serif', color: '#00f0ff', fontSize: '0.9rem' }}>
+                                ✓ Selected: {selectedFile.name}
+                            </div>
+                        )}
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '12px' }}>
                             {avatars.map(avatar => (
                                 <button
                                     key={avatar.id}
                                     onClick={() => setSelectedAvatar(avatar.id)}
                                     style={{
-                                        background: selectedAvatar === avatar.id ? `rgba(${hexToRgb(avatar.color)}, 0.15)` : 'rgba(255, 255, 255, 0.03)',
-                                        border: `1px solid ${selectedAvatar === avatar.id ? avatar.color : 'rgba(255, 255, 255, 0.1)'}`,
-                                        padding: '15px',
+                                        padding: '18px 10px',
+                                        background: selectedAvatar === avatar.id 
+                                            ? `linear-gradient(135deg, rgba(${hexToRgb(avatar.color)}, 0.25) 0%, rgba(${hexToRgb(avatar.color)}, 0.1) 100%)`
+                                            : 'rgba(255,255,255,0.02)',
+                                        border: `1px solid ${selectedAvatar === avatar.id ? avatar.color : 'rgba(255,255,255,0.1)'}`,
                                         cursor: 'pointer',
                                         display: 'flex',
                                         flexDirection: 'column',
@@ -342,31 +349,36 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                         gap: '10px',
                                         transition: 'all 0.3s ease',
                                         position: 'relative',
-                                        overflow: 'hidden'
+                                        boxShadow: selectedAvatar === avatar.id ? `0 0 20px ${avatar.color}40, inset 0 0 15px ${avatar.color}10` : 'none'
                                     }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.borderColor = avatar.color;
-                                        e.currentTarget.style.background = `rgba(${hexToRgb(avatar.color)}, 0.1)`;
-                                    }}
-                                    onMouseLeave={(e) => {
+                                    onMouseEnter={e => {
                                         if (selectedAvatar !== avatar.id) {
-                                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                                            e.currentTarget.style.borderColor = avatar.color;
+                                            e.currentTarget.style.background = `rgba(${hexToRgb(avatar.color)}, 0.1)`;
+                                            e.currentTarget.style.boxShadow = `0 0 15px ${avatar.color}30`;
+                                        }
+                                    }}
+                                    onMouseLeave={e => {
+                                        if (selectedAvatar !== avatar.id) {
+                                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                                            e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                                            e.currentTarget.style.boxShadow = 'none';
                                         }
                                     }}
                                 >
                                     <div style={{
-                                        fontSize: '2.2rem',
-                                        filter: selectedAvatar === avatar.id ? `drop-shadow(0 0 10px ${avatar.color})` : 'none',
+                                        fontSize: '2.5rem',
+                                        filter: selectedAvatar === avatar.id ? `drop-shadow(0 0 12px ${avatar.color})` : 'none',
                                         transition: 'all 0.3s'
                                     }}>
                                         {avatar.icon}
                                     </div>
                                     <div style={{
-                                        fontFamily: 'Orbitron',
-                                        fontSize: '0.7rem',
-                                        color: selectedAvatar === avatar.id ? avatar.color : '#888',
-                                        letterSpacing: '1px'
+                                        fontFamily: 'Orbitron, sans-serif',
+                                        fontSize: '0.65rem',
+                                        color: selectedAvatar === avatar.id ? avatar.color : '#666',
+                                        letterSpacing: '0.5px',
+                                        textShadow: selectedAvatar === avatar.id ? `0 0 10px ${avatar.color}` : 'none'
                                     }}>
                                         {avatar.name.toUpperCase()}
                                     </div>
@@ -376,37 +388,45 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     </div>
 
                     {/* Bio Section */}
-                    <div style={{ marginBottom: '30px' }}>
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: '15px'
-                        }}>
+                    <div style={{ marginBottom: '35px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                             <h3 style={{
-                                fontFamily: 'Orbitron',
-                                color: '#4ade80',
-                                fontSize: '1.2rem'
+                                fontFamily: 'Orbitron, sans-serif',
+                                color: '#00f0ff',
+                                fontSize: '1rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                textShadow: '0 0 10px rgba(0,240,255,0.3)'
                             }}>
-                                BIO
+                                <span style={{ color: '#00f0ff' }}>◆</span> BIO
                             </h3>
                             {!isEditingBio && (
                                 <button
                                     onClick={() => setIsEditingBio(true)}
                                     style={{
                                         background: 'transparent',
-                                        border: '1px solid #4ade80',
-                                        color: '#4ade80',
-                                        padding: '6px 12px',
-                                        fontFamily: 'Orbitron',
-                                        fontSize: '0.8rem',
+                                        border: '1px solid #00f0ff',
+                                        color: '#00f0ff',
+                                        padding: '6px 15px',
+                                        fontFamily: 'Orbitron, sans-serif',
+                                        fontSize: '0.7rem',
                                         cursor: 'pointer',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '6px'
+                                        gap: '6px',
+                                        transition: 'all 0.3s'
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.background = 'rgba(0,240,255,0.1)';
+                                        e.currentTarget.style.boxShadow = '0 0 15px rgba(0,240,255,0.3)';
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.background = 'transparent';
+                                        e.currentTarget.style.boxShadow = 'none';
                                     }}
                                 >
-                                    <Edit2 size={14} />
+                                    <Edit2 size={12} />
                                     EDIT
                                 </button>
                             )}
@@ -420,32 +440,29 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                     style={{
                                         width: '100%',
                                         height: '100px',
-                                        background: 'rgba(74, 222, 128, 0.05)',
-                                        border: '1px solid #4ade80',
+                                        background: 'rgba(0,240,255,0.05)',
+                                        border: '1px solid rgba(0,240,255,0.3)',
                                         color: '#fff',
-                                        padding: '10px',
-                                        fontFamily: 'Rajdhani',
+                                        padding: '15px',
+                                        fontFamily: 'Rajdhani, sans-serif',
                                         fontSize: '1rem',
-                                        resize: 'none'
+                                        resize: 'none',
+                                        outline: 'none'
                                     }}
+                                    onFocus={e => e.currentTarget.style.borderColor = '#00f0ff'}
+                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(0,240,255,0.3)'}
                                     placeholder="Tell us about yourself..."
                                 />
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'flex-end',
-                                    marginTop: '10px'
-                                }}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
                                     <button
-                                        onClick={() => {
-                                            setIsEditingBio(false);
-                                            setBioText(user.profile.bio || '');
-                                        }}
+                                        onClick={() => { setIsEditingBio(false); setBioText(user.profile.bio || ''); }}
                                         style={{
                                             background: 'transparent',
                                             border: '1px solid #666',
-                                            color: '#666',
+                                            color: '#888',
                                             padding: '8px 20px',
-                                            fontFamily: 'Orbitron',
+                                            fontFamily: 'Orbitron, sans-serif',
+                                            fontSize: '0.75rem',
                                             cursor: 'pointer'
                                         }}
                                     >
@@ -455,12 +472,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                             </div>
                         ) : (
                             <div style={{
-                                background: 'rgba(74, 222, 128, 0.05)',
-                                border: '1px solid #333',
-                                padding: '15px',
-                                fontFamily: 'Rajdhani',
+                                background: 'rgba(0,240,255,0.03)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                padding: '18px',
+                                fontFamily: 'Rajdhani, sans-serif',
                                 fontSize: '1rem',
-                                color: '#e0e0e0',
+                                color: '#aaa',
                                 minHeight: '60px'
                             }}>
                                 {user.profile.bio || 'No bio set. Click EDIT to add one.'}
@@ -470,37 +487,35 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
 
                     {/* Save Changes Button */}
                     {hasChanges && (
-                        <div style={{ marginBottom: '30px' }}>
+                        <div style={{ marginBottom: '35px' }}>
                             <button
                                 onClick={saveChanges}
                                 disabled={isSaving}
                                 style={{
-                                    background: '#4ade80',
+                                    width: '100%',
+                                    background: 'linear-gradient(135deg, #00f0ff 0%, #00cc88 100%)',
                                     border: 'none',
                                     color: '#000',
-                                    padding: '15px 40px',
-                                    fontFamily: 'Orbitron',
+                                    padding: '18px',
+                                    fontFamily: 'Orbitron, sans-serif',
                                     fontSize: '1rem',
-                                    cursor: isSaving ? 'not-allowed' : 'pointer',
-                                    clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)',
-                                    boxShadow: '0 0 30px rgba(74, 222, 128, 0.5)',
-                                    transition: 'all 0.3s ease',
                                     fontWeight: 'bold',
-                                    letterSpacing: '2px',
-                                    opacity: isSaving ? 0.6 : 1,
-                                    width: '100%'
+                                    letterSpacing: '3px',
+                                    cursor: isSaving ? 'not-allowed' : 'pointer',
+                                    clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)',
+                                    boxShadow: '0 0 40px rgba(0,240,255,0.4)',
+                                    transition: 'all 0.3s ease',
+                                    opacity: isSaving ? 0.7 : 1
                                 }}
-                                onMouseEnter={(e) => {
+                                onMouseEnter={e => {
                                     if (!isSaving) {
-                                        e.currentTarget.style.boxShadow = '0 0 50px rgba(74, 222, 128, 0.8)';
+                                        e.currentTarget.style.boxShadow = '0 0 60px rgba(0,240,255,0.6)';
                                         e.currentTarget.style.transform = 'translateY(-2px)';
                                     }
                                 }}
-                                onMouseLeave={(e) => {
-                                    if (!isSaving) {
-                                        e.currentTarget.style.boxShadow = '0 0 30px rgba(74, 222, 128, 0.5)';
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                    }
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.boxShadow = '0 0 40px rgba(0,240,255,0.4)';
+                                    e.currentTarget.style.transform = 'translateY(0)';
                                 }}
                             >
                                 {isSaving ? 'SAVING...' : 'SAVE CHANGES'}
@@ -511,22 +526,19 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     {/* Achievements */}
                     <div>
                         <h3 style={{
-                            fontFamily: 'Orbitron',
-                            color: '#4ade80',
-                            fontSize: '1.2rem',
-                            marginBottom: '15px',
+                            fontFamily: 'Orbitron, sans-serif',
+                            color: '#00f0ff',
+                            fontSize: '1rem',
+                            marginBottom: '20px',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '10px'
+                            gap: '10px',
+                            textShadow: '0 0 10px rgba(0,240,255,0.3)'
                         }}>
-                            <Trophy size={20} />
+                            <Trophy size={18} />
                             ACHIEVEMENTS ({user.profile.achievements?.length || 0}/{achievements.length})
                         </h3>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                            gap: '15px'
-                        }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
                             {achievements.map(achievement => {
                                 const isUnlocked = user.profile.achievements?.includes(achievement.id) || false;
                                 const rarityColor = getRarityColor(achievement.rarity);
@@ -535,38 +547,36 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                     <div
                                         key={achievement.id}
                                         style={{
-                                            background: isUnlocked ? `rgba(${hexToRgb(rarityColor)}, 0.1)` : 'rgba(0, 0, 0, 0.3)',
-                                            border: `1px solid ${isUnlocked ? rarityColor : '#333'}`,
-                                            padding: '15px',
-                                            opacity: isUnlocked ? 1 : 0.5,
-                                            position: 'relative'
+                                            padding: '18px',
+                                            background: isUnlocked 
+                                                ? `linear-gradient(135deg, rgba(${hexToRgb(rarityColor)}, 0.15) 0%, rgba(${hexToRgb(rarityColor)}, 0.05) 100%)`
+                                                : 'rgba(0,0,0,0.3)',
+                                            border: `1px solid ${isUnlocked ? rarityColor : 'rgba(255,255,255,0.1)'}`,
+                                            opacity: isUnlocked ? 1 : 0.4,
+                                            position: 'relative',
+                                            transition: 'all 0.3s',
+                                            boxShadow: isUnlocked ? `inset 0 0 20px ${rarityColor}10` : 'none'
                                         }}
                                     >
                                         {isUnlocked && (
-                                            <div style={{
-                                                position: 'absolute',
-                                                top: '10px',
-                                                right: '10px',
-                                                color: rarityColor
-                                            }}>
-                                                <Star size={16} fill={rarityColor} />
+                                            <div style={{ position: 'absolute', top: '12px', right: '12px', color: rarityColor }}>
+                                                <Star size={14} fill={rarityColor} />
                                             </div>
                                         )}
-                                        <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
-                                            {achievement.icon}
-                                        </div>
+                                        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>{achievement.icon}</div>
                                         <div style={{
-                                            fontFamily: 'Orbitron',
-                                            fontSize: '0.9rem',
+                                            fontFamily: 'Orbitron, sans-serif',
+                                            fontSize: '0.8rem',
                                             color: rarityColor,
-                                            marginBottom: '5px'
+                                            marginBottom: '5px',
+                                            textShadow: isUnlocked ? `0 0 10px ${rarityColor}50` : 'none'
                                         }}>
                                             {achievement.name}
                                         </div>
                                         <div style={{
-                                            fontFamily: 'Rajdhani',
-                                            fontSize: '0.85rem',
-                                            color: '#999'
+                                            fontFamily: 'Rajdhani, sans-serif',
+                                            fontSize: '0.8rem',
+                                            color: '#777'
                                         }}>
                                             {achievement.description}
                                         </div>
@@ -577,9 +587,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     </div>
                 </div>
             </motion.div>
-        </div>,
-        document.body
+        </div>
     );
+
+    return createPortal(modalContent, document.body);
 };
 
 interface StatCardProps {
@@ -591,26 +602,38 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ label, value, color }) => {
     return (
         <div style={{
-            background: `rgba(${hexToRgb(color)}, 0.05)`,
+            padding: '20px',
+            background: `linear-gradient(135deg, rgba(${hexToRgb(color)}, 0.1) 0%, rgba(${hexToRgb(color)}, 0.03) 100%)`,
             border: `1px solid ${color}`,
-            padding: '15px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '5px'
+            position: 'relative',
+            overflow: 'hidden',
+            clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
         }}>
+            <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '30px',
+                height: '2px',
+                background: color,
+                boxShadow: `0 0 10px ${color}`
+            }} />
             <span style={{
-                fontFamily: 'Orbitron',
-                fontSize: '0.75rem',
-                color: '#666',
-                letterSpacing: '1px'
+                fontFamily: 'Orbitron, sans-serif',
+                fontSize: '0.7rem',
+                color: '#888',
+                letterSpacing: '1px',
+                display: 'block',
+                marginBottom: '8px'
             }}>
                 {label}
             </span>
             <span style={{
-                fontFamily: 'Orbitron',
+                fontFamily: 'Orbitron, sans-serif',
                 fontSize: '1.5rem',
-                color,
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                color: color,
+                textShadow: `0 0 20px ${color}50`
             }}>
                 {value}
             </span>
@@ -620,9 +643,7 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, color }) => {
 
 const hexToRgb = (hex: string): string => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result
-        ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
-        : '0, 0, 0';
+    return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
 };
 
 const getRarityColor = (rarity: string) => {
