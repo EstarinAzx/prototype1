@@ -1,31 +1,73 @@
+// ============================================
+// IMPORTS
+// ============================================
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import { useNotification } from '../context/NotificationContext';
 import { motion } from 'framer-motion';
 
+// ============================================
+// LOGIN COMPONENT
+// ============================================
+// Purpose: Authentication screen for user login and signup
+// Features:
+// - Toggle between login/signup modes
+// - Client-side validation
+// - Firebase authentication integration
+// - Animated error notifications
+// - Cyberpunk-themed UI
+// ============================================
+
 export const Login: React.FC = () => {
+    // ============================================
+    // CONTEXT HOOKS
+    // ============================================
+    // Get authentication functions from StoreContext
     const { login, signup } = useStore();
+    // Get notification function to show toast messages
     const { showNotification } = useNotification();
+
+    // ============================================
+    // LOCAL STATE
+    // ============================================
+    // Toggle between login (true) and signup (false) mode
     const [isLogin, setIsLogin] = useState(true);
+    // User input for username/email
     const [username, setUsername] = useState('');
+    // User input for password
     const [password, setPassword] = useState('');
+    // Client-side validation error messages
     const [error, setError] = useState('');
 
+    // ============================================
+    // FORM SUBMISSION HANDLER
+    // ============================================
+    // Handles both login and signup flows
+    // Validates inputs before calling Firebase Auth
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
+        setError(''); // Clear previous errors
 
+        // ============================================
+        // VALIDATION
+        // ============================================
+        // Check if username is provided
         if (!username.trim()) {
             setError('IDENTITY REQUIRED');
             return;
         }
 
+        // Check if password is provided
         if (!password.trim()) {
             setError('ACCESS CODE REQUIRED');
             return;
         }
 
+        // ============================================
+        // AUTHENTICATION FLOW
+        // ============================================
         if (isLogin) {
+            // LOGIN PATH: Existing user authentication
             const result = await login(username, password);
             if (!result.success) {
                 showNotification(result.message, 'error');
@@ -33,6 +75,7 @@ export const Login: React.FC = () => {
                 showNotification(result.message, 'success');
             }
         } else {
+            // SIGNUP PATH: New user registration
             const result = await signup(username, password);
             if (!result.success) {
                 showNotification(result.message, 'error');
@@ -42,12 +85,20 @@ export const Login: React.FC = () => {
         }
     };
 
+    // ============================================
+    // RENDER / UI
+    // ============================================
     return (
         <div className="app-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
+            {/* Cyberpunk visual effects overlays */}
             <div className="crt-overlay"></div>
             <div className="scanline"></div>
 
+            {/* ============================================
+                ANIMATED LOGIN FORM CONTAINER
+                ============================================ */}
             <motion.div
+                // Zoom-in animation on mount
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 style={{
@@ -57,20 +108,33 @@ export const Login: React.FC = () => {
                     width: '100%',
                     maxWidth: '450px',
                     position: 'relative',
+                    // Cyberpunk angled corners using clip-path
                     clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)'
                 }}
             >
+                {/* ============================================
+                    HEADER SECTION
+                    ============================================ */}
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    {/* Brand title with glitch effect */}
                     <h1 className="glitch" data-text="CYBER_MARKET" style={{
                         fontFamily: 'Orbitron',
                         color: '#00f3ff',
                         fontSize: '2.5rem',
                         marginBottom: '10px'
                     }}>CYBER_MARKET</h1>
+                    {/* Authentication status text */}
                     <div style={{ color: '#ff0055', letterSpacing: '3px' }}>AUTHENTICATION REQUIRED</div>
                 </div>
 
+                {/* ============================================
+                    AUTHENTICATION FORM
+                    ============================================ */}
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                    {/* ============================================
+                        USERNAME INPUT FIELD
+                        ============================================ */}
                     <div>
                         <label style={{ display: 'block', color: '#ffe600', marginBottom: '5px', fontFamily: 'Orbitron' }}>
                             NETRUNNER_ID
@@ -93,6 +157,9 @@ export const Login: React.FC = () => {
                         />
                     </div>
 
+                    {/* ============================================
+                        PASSWORD INPUT FIELD
+                        ============================================ */}
                     <div>
                         <label style={{ display: 'block', color: '#ffe600', marginBottom: '5px', fontFamily: 'Orbitron' }}>
                             ACCESS_CODE
@@ -115,6 +182,10 @@ export const Login: React.FC = () => {
                         />
                     </div>
 
+                    {/* ============================================
+                        ERROR MESSAGE DISPLAY
+                        Shows validation errors with cyberpunk styling
+                        ============================================ */}
                     {error && (
                         <div style={{
                             color: '#ff0055',
@@ -128,14 +199,26 @@ export const Login: React.FC = () => {
                         </div>
                     )}
 
+                    {/* ============================================
+                        SUBMIT BUTTON
+                        Text changes based on login/signup mode
+                        ============================================ */}
                     <button className="cyber-btn" style={{ marginTop: '10px' }}>
                         {isLogin ? 'ESTABLISH LINK' : 'INITIALIZE NEW ID'}
                     </button>
                 </form>
 
+                {/* ============================================
+                    MODE TOGGLE SECTION
+                    Switch between Login and Signup modes
+                    ============================================ */}
                 <div style={{ marginTop: '20px', textAlign: 'center', color: '#666' }}>
                     <button
-                        onClick={() => { setIsLogin(!isLogin); setError(''); setPassword(''); }}
+                        onClick={() => {
+                            setIsLogin(!isLogin);  // Toggle mode
+                            setError('');          // Clear any errors
+                            setPassword('');       // Clear password for security
+                        }}
                         style={{
                             background: 'none',
                             border: 'none',
@@ -146,6 +229,7 @@ export const Login: React.FC = () => {
                             fontSize: '1rem'
                         }}
                     >
+                        {/* Toggle button text based on current mode */}
                         {isLogin ? 'NO ID? REGISTER NEW LINK' : 'ALREADY REGISTERED? LOGIN'}
                     </button>
                 </div>

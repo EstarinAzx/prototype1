@@ -7,7 +7,7 @@ import {
     signOut,
     onAuthStateChanged
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, collection, getDocs, addDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 interface Loadout {
@@ -24,6 +24,15 @@ interface User {
     credits: number;
     inventory: Item[];
     loadout: Loadout;
+    isAdmin: boolean;
+    profile: {
+        avatar: string;
+        bio: string;
+        level: number;
+        xp: number;
+        achievements: string[];
+        joinedDate: number;
+    };
 }
 
 interface Transaction {
@@ -39,13 +48,13 @@ interface StoreContextType {
     credits: number;
     user: User | null;
     transactions: Transaction[];
-    favorites: number[];
+    favorites: (number | string)[];
     loading: boolean;
     addToCart: (item: Item) => void;
     removeFromCart: (index: number) => void;
     clearCart: () => void;
     checkout: () => Promise<{ success: boolean; message: string }>;
-    toggleFavorite: (id: number) => void;
+    toggleFavorite: (id: number | string) => void;
     login: (username: string, password: string) => Promise<{ success: boolean; message: string }>;
     signup: (username: string, password: string) => Promise<{ success: boolean; message: string }>;
     logout: () => Promise<void>;
@@ -58,16 +67,21 @@ interface StoreContextType {
     setSelectedCategory: (category: string) => void;
     equipItem: (item: Item, slot: keyof Loadout) => void;
     unequipItem: (slot: keyof Loadout) => void;
+    updateProfile: (avatar: string, bio: string) => Promise<void>;
+    unlockAchievement: (achievementId: string) => void;
+    addXP: (amount: number) => void;
+    addProduct: (product: Omit<Item, 'id'>) => Promise<string>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [items, setItems] = useState<Item[]>([]);
     const [cart, setCart] = useState<Item[]>([]);
     const [credits, setCredits] = useState<number>(50000);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [favorites, setFavorites] = useState<number[]>([]);
+    const [favorites, setFavorites] = useState<(number | string)[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState<'price-asc' | 'price-desc' | 'name' | null>(null);
@@ -100,6 +114,45 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
         return () => unsubscribe();
     }, []);
 
+    // Fetch products from Firestore
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const productsCollection = collection(db, 'products');
+                const productsSnapshot = await getDocs(productsCollection);
+
+                if (productsSnapshot.empty) {
+                    // Seed initial data if empty
+                    console.log('Seeding initial products...');
+                    const seededItems: Item[] = [];
+                    for (const item of initialItems) {
+                        const docRef = await addDoc(productsCollection, item);
+                        seededItems.push({ ...item, id: parseInt(docRef.id) }); // Temporary ID handling
+                    }
+                    setItems(initialItems); // Use initial items for now to avoid ID issues
+                } else {
+                    const loadedItems = productsSnapshot.docs.map(doc => ({
+                        id: doc.id, // Use Firestore ID
+                        ...doc.data()
+                    })) as any[]; // Type assertion needed due to ID mismatch (number vs string)
+
+                    // Normalize IDs to handle legacy number IDs and new string IDs
+                    const normalizedItems = loadedItems.map(item => ({
+                        ...item,
+                        id: typeof item.id === 'string' && !isNaN(Number(item.id)) ? Number(item.id) : item.id
+                    }));
+
+                    setItems(normalizedItems);
+                }
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                setItems(initialItems); // Fallback
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
     const loadUserData = async (uid: string) => {
         try {
             const userDoc = await getDoc(doc(db, 'users', uid));
@@ -110,7 +163,16 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
                     username: userData.username,
                     credits: userData.credits,
                     inventory: userData.inventory || [],
-                    loadout: userData.loadout || defaultLoadout
+                    loadout: userData.loadout || defaultLoadout,
+                    isAdmin: userData.isAdmin || false,
+                    profile: userData.profile || {
+                        avatar: 'netrunner',
+                        bio: '',
+                        level: 1,
+                        xp: 0,
+                        achievements: [],
+                        joinedDate: userData.createdAt || Date.now()
+                    }
                 };
                 setUser(loadedUser);
                 setCredits(userData.credits);
@@ -201,11 +263,65 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
         soundManager.playClick();
     };
 
-    const toggleFavorite = (id: number) => {
+    const toggleFavorite = (id: number | string) => {
         setFavorites(prev =>
             prev.includes(id) ? prev.filter(fav => fav !== id) : [...prev, id]
         );
         soundManager.playClick();
+    };
+
+    const updateProfile = async (avatar: string, bio: string) => {
+        if (!user) return;
+        const updatedProfile = { ...user.profile, avatar, bio };
+        setUser({ ...user, profile: updatedProfile });
+        soundManager.playClick();
+    };
+
+    const unlockAchievement = (achievementId: string) => {
+        if (!user) return;
+        if (user.profile.achievements.includes(achievementId)) return;
+
+        const updatedAchievements = [...user.profile.achievements, achievementId];
+        const updatedProfile = { ...user.profile, achievements: updatedAchievements };
+        setUser({ ...user, profile: updatedProfile });
+        soundManager.playClick();
+    };
+
+    const addXP = (amount: number) => {
+        if (!user) return;
+
+        const newXP = user.profile.xp + amount;
+        const XP_PER_LEVEL = 1000;
+        const newLevel = Math.floor(newXP / XP_PER_LEVEL) + 1;
+
+        const updatedProfile = {
+            ...user.profile,
+            xp: newXP,
+            level: newLevel
+        };
+
+        setUser({ ...user, profile: updatedProfile });
+
+        // Level up notification
+        if (newLevel > user.profile.level) {
+            soundManager.playPurchase();
+        }
+    };
+
+    const addProduct = async (product: Omit<Item, 'id'>): Promise<string> => {
+        try {
+            const productsCollection = collection(db, 'products');
+            const docRef = await addDoc(productsCollection, product);
+
+            // Add to local state immediately
+            const newItem: Item = { ...product, id: docRef.id };
+            setItems(prev => [...prev, newItem]);
+
+            return docRef.id;
+        } catch (error) {
+            console.error('Error adding product:', error);
+            throw error;
+        }
     };
 
     const login = async (username: string, password: string) => {
@@ -226,6 +342,10 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
             const email = `${username}@cybermarket.local`;
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
+            // Check if username is in admin list
+            const ADMIN_USERNAMES = ['admin', 'superadmin', 'root'];
+            const isAdmin = ADMIN_USERNAMES.includes(username.toLowerCase());
+
             // Create user document in Firestore
             await setDoc(doc(db, 'users', userCredential.user.uid), {
                 username,
@@ -241,10 +361,19 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
                     implant: null,
                     gear: null
                 },
+                isAdmin,
+                profile: {
+                    avatar: 'netrunner',
+                    bio: '',
+                    level: 1,
+                    xp: 0,
+                    achievements: [],
+                    joinedDate: Date.now()
+                },
                 createdAt: Date.now()
             });
 
-            return { success: true, message: 'ACCOUNT CREATED SUCCESSFULLY' };
+            return { success: true, message: isAdmin ? 'ADMIN ACCOUNT CREATED' : 'ACCOUNT CREATED SUCCESSFULLY' };
         } catch (error: any) {
             console.error('Signup error:', error);
 
@@ -286,7 +415,7 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <StoreContext.Provider value={{
-            items: initialItems,
+            items,
             cart,
             credits,
             user,
@@ -309,7 +438,11 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
             selectedCategory,
             setSelectedCategory,
             equipItem,
-            unequipItem
+            unequipItem,
+            updateProfile,
+            unlockAchievement,
+            addXP,
+            addProduct
         }}>
             {children}
         </StoreContext.Provider>

@@ -572,3 +572,329 @@ body {
   background: rgba(107, 114, 128, 0.5);
   color: #9ca3af;
 }
+
+/* ==========================================
+   RESPONSIVE DESIGN - Mobile First
+   ========================================== */
+
+/* Mobile Styles (Base - up to 767px) */
+@media (max-width: 767px) {
+  body {
+    overflow-y: auto;
+  }
+
+  .app-container {
+    padding: 10px;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  /* Header - Mobile */
+  .cyber-header {
+    flex-direction: column;
+    padding: 10px 15px;
+    gap: 10px;
+  }
+
+  .brand {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .brand .version {
+    font-size: 0.6rem;
+  }
+
+  .user-stats {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .user-stats>* {
+    width: 100%;
+    justify-content: space-between;
+    flex-direction: row !important;
+  }
+
+  .stat-item {
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stat-item .label {
+    font-size: 0.7rem;
+  }
+
+  .stat-item .value {
+    font-size: 1.2rem;
+  }
+
+  /* Main Layout - Stack vertically on mobile */
+  .main-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 10px;
+    overflow-y: auto;
+  }
+
+  /* Navigation - Horizontal scroll on mobile */
+  .cyber-nav {
+    padding: 10px;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+  }
+
+  #category-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 5px;
+    scrollbar-width: thin;
+  }
+
+  .nav-item {
+    white-space: nowrap;
+    padding: 10px 15px;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav-item:hover,
+  .nav-item.active {
+    border-left: none;
+    border-bottom: 4px solid var(--neon-cyan);
+    padding-left: 15px;
+  }
+
+  .nav-decoration {
+    display: none;
+  }
+
+  /* Product Grid - Single column on mobile */
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding-right: 0;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .product-card {
+    max-width: 100%;
+  }
+
+  .card-image {
+    height: 200px;
+  }
+
+  /* Cart Sidebar - Full screen overlay on mobile */
+  .cyber-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1000;
+    border-left: none;
+    border-top: 2px solid var(--neon-pink);
+    background: var(--bg-dark);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .cyber-sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Typography adjustments */
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .card-stats {
+    font-size: 0.75rem;
+  }
+
+  .cyber-btn {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  /* Touch-friendly buttons */
+  .btn-buy,
+  .btn-remove,
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Tablet Styles (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .app-container {
+    padding: 15px;
+  }
+
+  /* Header - Tablet */
+  .cyber-header {
+    padding: 15px 20px;
+  }
+
+  .brand {
+    font-size: 1.8rem;
+  }
+
+  .user-stats {
+    gap: 20px;
+  }
+
+  /* Main Layout - Sidebar below nav on tablet */
+  .main-layout {
+    grid-template-columns: 180px 1fr;
+    grid-template-rows: 1fr;
+    gap: 15px;
+  }
+
+  .cyber-sidebar {
+    grid-column: 1 / -1;
+    max-height: 300px;
+    border-left: none;
+    border-top: 1px solid rgba(255, 0, 85, 0.3);
+  }
+
+  /* Navigation - Tablet */
+  .cyber-nav {
+    padding: 15px;
+  }
+
+  .nav-item {
+    font-size: 1rem;
+    padding: 12px 8px;
+  }
+
+  /* Product Grid - 2 columns on tablet */
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .card-image {
+    height: 160px;
+  }
+}
+
+/* Desktop Styles (1024px and up) - Base styles apply */
+@media (min-width: 1024px) {
+
+  /* Main layout already defined in base styles */
+  .main-layout {
+    grid-template-columns: 200px 1fr 350px;
+  }
+
+  /* Product Grid - 3+ columns */
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+/* Large Desktop (1440px and up) */
+@media (min-width: 1440px) {
+  .app-container {
+    max-width: 1800px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .cyber-sidebar {
+    max-width: 400px;
+  }
+}
+
+/* Inventory Modal - Responsive */
+@media (max-width: 767px) {
+  .inventory-container {
+    width: 100% !important;
+    height: 100vh !important;
+    max-width: 100% !important;
+    flex-direction: column !important;
+  }
+
+  .loadout-panel {
+    width: 100% !important;
+    max-height: 40vh;
+    overflow-y: auto;
+    border-right: none !important;
+    border-bottom: 1px solid #333 !important;
+    padding: 20px !important;
+  }
+
+  .inventory-panel {
+    width: 100% !important;
+    padding: 20px !important;
+  }
+
+  .inventory-panel h2 {
+    font-size: 1rem !important;
+  }
+
+  .loadout-panel h2 {
+    font-size: 1rem !important;
+  }
+}
+
+/* Login Screen - Responsive */
+@media (max-width: 767px) {
+  .app-container {
+    padding: 5px;
+  }
+
+  .app-container>div>div {
+    padding: 20px !important;
+    max-width: 100% !important;
+  }
+
+  .app-container h1 {
+    font-size: 1.8rem !important;
+  }
+
+  .app-container input {
+    font-size: 1rem !important;
+    padding: 12px !important;
+  }
+}
+
+/* Notification Toast - Responsive */
+@media (max-width: 767px) {
+  .modal-overlay>div:first-child {
+    min-width: calc(100vw - 40px) !important;
+    max-width: calc(100vw - 40px) !important;
+  }
+
+  /* Show mobile cart toggle button */
+  .mobile-cart-toggle {
+    display: flex !important;
+  }
+
+  /* Show mobile close button in cart */
+  .mobile-close-btn {
+    display: block !important;
+  }
+
+  /* Hide user stats buttons on mobile (they're in the cart) */
+  .user-stats button {
+    display: none !important;
+  }
+
+  /* Keep only credits and operator visible on mobile */
+  .user-stats {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 15px !important;
+  }
+}

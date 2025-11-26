@@ -4,7 +4,9 @@ import { ProductGrid } from './ProductGrid';
 import { CartSidebar } from './CartSidebar';
 import { TransactionHistory } from './TransactionHistory';
 import { Inventory } from './Inventory';
-import { Search, Receipt, Package } from 'lucide-react';
+import { AdminDashboard } from './AdminDashboard';
+import { UserProfile } from './UserProfile';
+import { Search, Receipt, Package, ShoppingCart, Shield, User } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
 export const Layout: React.FC = () => {
@@ -21,6 +23,9 @@ export const Layout: React.FC = () => {
 
     const [showHistory, setShowHistory] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
+    const [showCart, setShowCart] = useState(false);
+    const [showAdmin, setShowAdmin] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
     const categories = ['all', 'weapon', 'implant', 'gear'];
 
     return (
@@ -34,11 +39,11 @@ export const Layout: React.FC = () => {
                     <span className="version">SYS.VER.3.0.REACT</span>
                 </div>
 
-                <div className="search-bar" style={{ flex: 1, margin: '0 40px', position: 'relative' }}>
-                    <Search style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#00f3ff' }} />
+                <div className="search-bar" style={{ flex: 1, margin: '0 20px', position: 'relative', maxWidth: '500px' }}>
+                    <Search style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#00f3ff' }} size={18} />
                     <input
                         type="text"
-                        placeholder="SEARCH DATABASE..."
+                        placeholder="SEARCH..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         style={{
@@ -48,12 +53,68 @@ export const Layout: React.FC = () => {
                             padding: '10px 10px 10px 40px',
                             color: '#fff',
                             fontFamily: 'Orbitron',
-                            fontSize: '1rem'
+                            fontSize: '0.9rem'
                         }}
                     />
                 </div>
 
+                {/* Mobile Cart Toggle */}
+                <button
+                    className="mobile-cart-toggle"
+                    onClick={() => setShowCart(true)}
+                    style={{
+                        display: 'none',
+                        background: 'transparent',
+                        border: '1px solid var(--neon-pink)',
+                        color: 'var(--neon-pink)',
+                        padding: '8px',
+                        cursor: 'pointer',
+                        position: 'relative'
+                    }}
+                >
+                    <ShoppingCart size={20} />
+                    {useStore().cart.length > 0 && (
+                        <span style={{
+                            position: 'absolute',
+                            top: '-5px',
+                            right: '-5px',
+                            background: 'var(--neon-pink)',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: '18px',
+                            height: '18px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.7rem',
+                            fontFamily: 'Orbitron'
+                        }}>
+                            {useStore().cart.length}
+                        </span>
+                    )}
+                </button>
+
                 <div className="user-stats">
+                    {user?.isAdmin && (
+                        <button
+                            onClick={() => setShowAdmin(true)}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid #ffe600',
+                                color: '#ffe600',
+                                padding: '8px 15px',
+                                fontFamily: 'Orbitron',
+                                cursor: 'pointer',
+                                marginRight: '10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <Shield size={16} />
+                            ADMIN
+                        </button>
+                    )}
                     <button
                         onClick={() => setShowInventory(true)}
                         style={{
@@ -90,10 +151,26 @@ export const Layout: React.FC = () => {
                         <Receipt size={16} />
                         HISTORY
                     </button>
-                    <div className="stat-item" style={{ marginRight: '20px' }}>
-                        <span className="label">OPERATOR</span>
+                    <button
+                        onClick={() => setShowProfile(true)}
+                        className="stat-item"
+                        style={{
+                            marginRight: '20px',
+                            cursor: 'pointer',
+                            background: 'transparent',
+                            border: 'none',
+                            padding: 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start'
+                        }}
+                    >
+                        <span className="label" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <User size={12} />
+                            OPERATOR
+                        </span>
                         <span className="value" style={{ color: '#00f3ff' }}>{user?.username.toUpperCase()}</span>
-                    </div>
+                    </button>
                     <div className="stat-item">
                         <span className="label">CREDITS</span>
                         <span className="value" id="credits-display">¥ {credits.toLocaleString()}</span>
@@ -155,12 +232,14 @@ export const Layout: React.FC = () => {
                 </nav>
 
                 <ProductGrid />
-                <CartSidebar />
+                <CartSidebar isOpen={showCart} onClose={() => setShowCart(false)} />
             </div>
 
             <TransactionHistory isOpen={showHistory} onClose={() => setShowHistory(false)} />
             <AnimatePresence>
                 {showInventory && <Inventory onClose={() => setShowInventory(false)} />}
+                {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
+                {showProfile && <UserProfile onClose={() => setShowProfile(false)} />}
             </AnimatePresence>
         </div>
     );

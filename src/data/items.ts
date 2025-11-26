@@ -5,7 +5,7 @@ export interface ItemStats {
 export type ItemRarity = 'legendary' | 'epic' | 'rare' | 'common';
 
 export interface Item {
-    id: number;
+    id: number | string;
     name: string;
     type: 'weapon' | 'implant' | 'gear';
     price: number;
