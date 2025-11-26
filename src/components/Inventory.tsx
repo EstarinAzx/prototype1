@@ -55,12 +55,12 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     maxWidth: '1200px',
                     height: '80vh',
                     background: '#0a0a0a',
-                    border: '1px solid #00f3ff',
+                    border: '1px solid #4ade80',
                     display: 'flex',
                     flexDirection: 'row',
                     overflow: 'hidden',
                     position: 'relative',
-                    boxShadow: '0 0 30px rgba(0, 243, 255, 0.2)'
+                    boxShadow: '0 0 30px rgba(74, 222, 128, 0.2)'
                 }}
             >
                 <button
@@ -103,7 +103,7 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             return (
                                 <div key={slot.id} style={{
                                     background: 'rgba(0, 0, 0, 0.6)',
-                                    border: `1px solid ${equippedItem ? '#00f3ff' : '#333'}`,
+                                    border: `1px solid ${equippedItem ? '#4ade80' : '#333'}`,
                                     padding: '15px',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -114,11 +114,11 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                     <div style={{
                                         width: '40px',
                                         height: '40px',
-                                        background: 'rgba(0, 243, 255, 0.1)',
+                                        background: 'rgba(74, 222, 128, 0.1)',
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                        color: '#00f3ff'
+                                        color: '#4ade80'
                                     }}>
                                         <Icon size={20} />
                                     </div>
@@ -158,8 +158,8 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         })}
                     </div>
 
-                    <div style={{ marginTop: 'auto', padding: '20px', background: 'rgba(0, 243, 255, 0.05)', border: '1px solid #00f3ff' }}>
-                        <div style={{ fontFamily: 'Orbitron', color: '#00f3ff', fontSize: '0.9rem', marginBottom: '10px' }}>
+                    <div style={{ marginTop: 'auto', padding: '20px', background: 'rgba(74, 222, 128, 0.05)', border: '1px solid #4ade80' }}>
+                        <div style={{ fontFamily: 'Orbitron', color: '#4ade80', fontSize: '0.9rem', marginBottom: '10px' }}>
                             COMBAT STATS
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8rem', color: '#aaa' }}>
@@ -177,7 +177,7 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     padding: '40px',
                     overflowY: 'auto'
                 }}>
-                    <h2 style={{ fontFamily: 'Orbitron', color: '#00f3ff', marginBottom: '20px', letterSpacing: '2px' }}>
+                    <h2 style={{ fontFamily: 'Orbitron', color: '#4ade80', marginBottom: '20px', letterSpacing: '2px' }}>
                         STORAGE // {user.inventory.length} ITEMS
                     </h2>
 
@@ -237,9 +237,9 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                                 setViewing3D(item);
                                             }}
                                             style={{
-                                                background: 'rgba(0, 243, 255, 0.1)',
-                                                border: '1px solid #00f3ff',
-                                                color: '#00f3ff',
+                                                background: 'rgba(74, 222, 128, 0.1)',
+                                                border: '1px solid #4ade80',
+                                                color: '#4ade80',
                                                 padding: '4px 8px',
                                                 fontSize: '0.65rem',
                                                 fontFamily: 'Orbitron',

@@ -49,8 +49,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     maxWidth: '900px',
                     maxHeight: '90vh',
                     background: 'rgba(10, 10, 10, 0.95)',
-                    border: '1px solid #00f3ff',
-                    boxShadow: '0 0 50px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 243, 255, 0.05)',
+                    border: '1px solid #4ade80',
+                    boxShadow: '0 0 50px rgba(74, 222, 128, 0.15), inset 0 0 20px rgba(74, 222, 128, 0.05)',
                     display: 'flex',
                     flexDirection: 'column',
                     position: 'relative',
@@ -59,18 +59,18 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                 }}
             >
                 {/* Decorative Corner Lines */}
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '100px', height: '2px', background: '#00f3ff', boxShadow: '0 0 10px #00f3ff' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '2px', height: '100px', background: '#00f3ff', boxShadow: '0 0 10px #00f3ff' }} />
-                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '100px', height: '2px', background: '#00f3ff', boxShadow: '0 0 10px #00f3ff' }} />
-                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '2px', height: '100px', background: '#00f3ff', boxShadow: '0 0 10px #00f3ff' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100px', height: '2px', background: '#4ade80', boxShadow: '0 0 10px #4ade80' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '2px', height: '100px', background: '#4ade80', boxShadow: '0 0 10px #4ade80' }} />
+                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '100px', height: '2px', background: '#4ade80', boxShadow: '0 0 10px #4ade80' }} />
+                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '2px', height: '100px', background: '#4ade80', boxShadow: '0 0 10px #4ade80' }} />
                 {/* Header */}
                 <div style={{
                     padding: '20px 30px',
-                    borderBottom: '2px solid #00f3ff',
+                    borderBottom: '2px solid #4ade80',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    background: 'rgba(0, 243, 255, 0.05)'
+                    background: 'rgba(74, 222, 128, 0.05)'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                         <div style={{
@@ -90,7 +90,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                         <div>
                             <h1 style={{
                                 fontFamily: 'Orbitron',
-                                color: '#00f3ff',
+                                color: '#4ade80',
                                 fontSize: '1.8rem',
                                 letterSpacing: '2px',
                                 marginBottom: '5px'
@@ -150,7 +150,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                             marginBottom: '8px',
                             fontFamily: 'Orbitron',
                             fontSize: '0.85rem',
-                            color: '#00f3ff'
+                            color: '#4ade80'
                         }}>
                             <span>EXPERIENCE</span>
                             <span>{user.profile.xp} XP</span>
@@ -159,15 +159,15 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                             width: '100%',
                             height: '8px',
                             background: '#222',
-                            border: '1px solid #00f3ff',
+                            border: '1px solid #4ade80',
                             position: 'relative',
                             overflow: 'hidden'
                         }}>
                             <div style={{
                                 width: `${xpProgress}%`,
                                 height: '100%',
-                                background: 'linear-gradient(90deg, #00f3ff, #00ff00)',
-                                boxShadow: '0 0 10px #00f3ff',
+                                background: 'linear-gradient(90deg, #4ade80, #00ff00)',
+                                boxShadow: '0 0 10px #4ade80',
                                 transition: 'width 0.3s ease'
                             }} />
                         </div>
@@ -181,7 +181,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                         marginBottom: '30px'
                     }}>
                         <StatCard label="CREDITS" value={`¥${user.credits.toLocaleString()}`} color="#ffe600" />
-                        <StatCard label="ITEMS OWNED" value={user.inventory.length.toString()} color="#00f3ff" />
+                        <StatCard label="ITEMS OWNED" value={user.inventory.length.toString()} color="#4ade80" />
                         <StatCard label="TRANSACTIONS" value={(user as any).transactions?.length || 0} color="#ff0055" />
                         <StatCard label="DAYS ACTIVE" value={daysSinceJoined.toString()} color="#a855f7" />
                     </div>
@@ -190,10 +190,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     <div style={{ marginBottom: '30px' }}>
                         <h3 style={{
                             fontFamily: 'Orbitron',
-                            color: '#00f3ff',
+                            color: '#4ade80',
                             fontSize: '1.2rem',
                             marginBottom: '15px',
-                            borderBottom: '1px solid rgba(0, 243, 255, 0.3)',
+                            borderBottom: '1px solid rgba(74, 222, 128, 0.3)',
                             paddingBottom: '10px'
                         }}>
                             SELECT AVATAR
@@ -261,7 +261,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                         }}>
                             <h3 style={{
                                 fontFamily: 'Orbitron',
-                                color: '#00f3ff',
+                                color: '#4ade80',
                                 fontSize: '1.2rem'
                             }}>
                                 BIO
@@ -271,8 +271,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                     onClick={() => setIsEditingBio(true)}
                                     style={{
                                         background: 'transparent',
-                                        border: '1px solid #00f3ff',
-                                        color: '#00f3ff',
+                                        border: '1px solid #4ade80',
+                                        color: '#4ade80',
                                         padding: '6px 12px',
                                         fontFamily: 'Orbitron',
                                         fontSize: '0.8rem',
@@ -296,8 +296,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                     style={{
                                         width: '100%',
                                         height: '100px',
-                                        background: 'rgba(0, 243, 255, 0.05)',
-                                        border: '1px solid #00f3ff',
+                                        background: 'rgba(74, 222, 128, 0.05)',
+                                        border: '1px solid #4ade80',
                                         color: '#fff',
                                         padding: '10px',
                                         fontFamily: 'Rajdhani',
@@ -314,7 +314,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                     <button
                                         onClick={handleSaveProfile}
                                         style={{
-                                            background: '#00f3ff',
+                                            background: '#4ade80',
                                             border: 'none',
                                             color: '#000',
                                             padding: '8px 20px',
@@ -345,7 +345,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                             </div>
                         ) : (
                             <div style={{
-                                background: 'rgba(0, 243, 255, 0.05)',
+                                background: 'rgba(74, 222, 128, 0.05)',
                                 border: '1px solid #333',
                                 padding: '15px',
                                 fontFamily: 'Rajdhani',
@@ -362,7 +362,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     <div>
                         <h3 style={{
                             fontFamily: 'Orbitron',
-                            color: '#00f3ff',
+                            color: '#4ade80',
                             fontSize: '1.2rem',
                             marginBottom: '15px',
                             display: 'flex',

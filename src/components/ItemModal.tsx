@@ -29,7 +29,7 @@ export const ItemModal: React.FC<ItemModalProps> = ({ item, onClose }) => {
                 onClick={e => e.stopPropagation()}
                 style={{
                     background: '#0a0a0a',
-                    border: '2px solid #00f3ff',
+                    border: '2px solid #4ade80',
                     padding: '30px',
                     maxWidth: '800px',
                     width: '90%',
@@ -45,7 +45,7 @@ export const ItemModal: React.FC<ItemModalProps> = ({ item, onClose }) => {
                         right: '20px',
                         background: 'none',
                         border: 'none',
-                        color: '#ff0055',
+                        color: '#f59e0b',
                         cursor: 'pointer'
                     }}
                 >
@@ -57,8 +57,8 @@ export const ItemModal: React.FC<ItemModalProps> = ({ item, onClose }) => {
                         <img src={item.image} alt={item.name} style={{ width: '100%', border: '1px solid #333' }} />
                     </div>
                     <div style={{ flex: '1 1 300px', color: '#e0e0e0' }}>
-                        <h2 style={{ fontFamily: 'Orbitron', color: '#00f3ff', fontSize: '2rem', marginBottom: '10px' }}>{item.name}</h2>
-                        <div style={{ color: '#ff0055', marginBottom: '20px', textTransform: 'uppercase' }}>{item.type}</div>
+                        <h2 style={{ fontFamily: 'Orbitron', color: '#4ade80', fontSize: '2rem', marginBottom: '10px' }}>{item.name}</h2>
+                        <div style={{ color: '#f59e0b', marginBottom: '20px', textTransform: 'uppercase' }}>{item.type}</div>
 
                         <p style={{ marginBottom: '20px', lineHeight: '1.6', color: '#aaa' }}>
                             {item.description || "No description available."}

@@ -48,7 +48,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                 style={{
                     width: '100%',
                     background: '#0a0a0a',
-                    color: '#00f3ff',
+                    color: '#4ade80',
                     border: '1px solid #333',
                     padding: '8px 30px 8px 10px',
                     fontFamily: 'Orbitron',
@@ -78,7 +78,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     left: 0,
                     right: 0,
                     background: '#0a0a0a',
-                    border: '1px solid #00f3ff',
+                    border: '1px solid #4ade80',
                     zIndex: 1000,
                     maxHeight: '200px',
                     overflowY: 'auto',
@@ -92,7 +92,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                                 padding: '10px',
                                 fontFamily: 'Orbitron',
                                 fontSize: '0.85rem',
-                                color: option.value === value ? '#00f3ff' : '#e0e0e0',
+                                color: option.value === value ? '#4ade80' : '#e0e0e0',
                                 background: option.value === value
                                     ? 'rgba(0, 243, 255, 0.2)'
                                     : 'transparent',
@@ -102,7 +102,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                             onMouseEnter={(e) => {
                                 if (option.value !== value) {
                                     e.currentTarget.style.background = 'rgba(0, 243, 255, 0.1)';
-                                    e.currentTarget.style.color = '#00f3ff';
+                                    e.currentTarget.style.color = '#4ade80';
                                 }
                             }}
                             onMouseLeave={(e) => {

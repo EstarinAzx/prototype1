@@ -41,7 +41,7 @@ export const Layout: React.FC = () => {
                 </div>
 
                 <div className="search-bar" style={{ flex: 1, margin: '0 20px', position: 'relative', maxWidth: '500px' }}>
-                    <Search style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#00f3ff' }} size={18} />
+                    <Search style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#4ade80' }} size={18} />
                     <input
                         type="text"
                         placeholder="SEARCH..."
@@ -49,8 +49,8 @@ export const Layout: React.FC = () => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         style={{
                             width: '100%',
-                            background: 'rgba(0, 243, 255, 0.1)',
-                            border: '1px solid #00f3ff',
+                            background: 'rgba(74, 222, 128, 0.1)',
+                            border: '1px solid #4ade80',
                             padding: '10px 10px 10px 40px',
                             color: '#fff',
                             fontFamily: 'Orbitron',
@@ -120,8 +120,8 @@ export const Layout: React.FC = () => {
                         onClick={() => setShowInventory(true)}
                         style={{
                             background: 'transparent',
-                            border: '1px solid #00f3ff',
-                            color: '#00f3ff',
+                            border: '1px solid #4ade80',
+                            color: '#4ade80',
                             padding: '8px 15px',
                             fontFamily: 'Orbitron',
                             cursor: 'pointer',
@@ -170,7 +170,7 @@ export const Layout: React.FC = () => {
                             <User size={12} />
                             OPERATOR
                         </span>
-                        <span className="value" style={{ color: '#00f3ff' }}>{user?.username.toUpperCase()}</span>
+                        <span className="value" style={{ color: '#4ade80' }}>{user?.username.toUpperCase()}</span>
                     </button>
                     <div className="stat-item">
                         <span className="label">CREDITS</span>

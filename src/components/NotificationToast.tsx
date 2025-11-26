@@ -19,15 +19,15 @@ export const NotificationToast: React.FC<NotificationToastProps> = ({ notificati
             icon: CheckCircle
         },
         error: {
-            border: '1px solid #ff0055',
+            border: '1px solid #f59e0b',
             background: 'rgba(20, 0, 5, 0.9)',
-            color: '#ff0055',
+            color: '#f59e0b',
             icon: AlertTriangle
         },
         info: {
-            border: '1px solid #00f3ff',
+            border: '1px solid #4ade80',
             background: 'rgba(0, 20, 40, 0.9)',
-            color: '#00f3ff',
+            color: '#4ade80',
             icon: Info
         }
     };

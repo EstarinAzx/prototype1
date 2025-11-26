@@ -35,7 +35,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({ isOpen, 
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                             <h2 style={{
                                 fontFamily: 'Orbitron',
-                                color: '#00f3ff',
+                                color: '#4ade80',
                                 fontSize: '1.8rem'
                             }}>
                                 TRANSACTION LOG
@@ -44,7 +44,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({ isOpen, 
                                 background: 'none',
                                 border: 'none',
                                 cursor: 'pointer',
-                                color: '#ff0055'
+                                color: '#f59e0b'
                             }}>
                                 <X size={24} />
                             </button>
@@ -67,7 +67,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({ isOpen, 
                                             <span style={{ color: '#ffe600', fontFamily: 'Orbitron' }}>
                                                 {new Date(trans.timestamp).toLocaleString()}
                                             </span>
-                                            <span style={{ color: '#ff0055', fontFamily: 'Orbitron', fontSize: '1.2rem' }}>
+                                            <span style={{ color: '#f59e0b', fontFamily: 'Orbitron', fontSize: '1.2rem' }}>
                                                 ¥ {trans.total.toLocaleString()}
                                             </span>
                                         </div>

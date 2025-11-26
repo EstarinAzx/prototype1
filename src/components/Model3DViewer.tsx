@@ -48,7 +48,7 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
         }}>
             <div style={{
                 padding: '20px 30px',
-                borderBottom: '1px solid #00f3ff',
+                borderBottom: '1px solid #4ade80',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -57,7 +57,7 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                 <div>
                     <h2 style={{
                         fontFamily: 'Orbitron',
-                        color: '#00f3ff',
+                        color: '#4ade80',
                         fontSize: '1.5rem',
                         marginBottom: '5px'
                     }}>
@@ -73,8 +73,8 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                 </div>
                 <button onClick={onClose} style={{
                     background: 'transparent',
-                    border: '1px solid #ff0055',
-                    color: '#ff0055',
+                    border: '1px solid #f59e0b',
+                    color: '#f59e0b',
                     padding: '8px',
                     cursor: 'pointer'
                 }}>
@@ -98,10 +98,10 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                     left: '50%',
                     transform: 'translateX(-50%)',
                     background: 'rgba(0, 243, 255, 0.1)',
-                    border: '1px solid #00f3ff',
+                    border: '1px solid #4ade80',
                     padding: '15px 30px',
                     fontFamily: 'Rajdhani',
-                    color: '#00f3ff',
+                    color: '#4ade80',
                     fontSize: '0.9rem',
                     display: 'flex',
                     gap: '30px',
