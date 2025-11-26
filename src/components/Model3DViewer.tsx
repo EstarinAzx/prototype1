@@ -1,8 +1,7 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useFBX } from '@react-three/drei';
+import { OrbitControls, useFBX, Stage } from '@react-three/drei';
 import { X } from 'lucide-react';
-import * as THREE from 'three';
 
 interface Model3DViewerProps {
     modelPath: string;
@@ -10,58 +9,12 @@ interface Model3DViewerProps {
     onClose: () => void;
 }
 
-const Model: React.FC<{ modelPath: string; setDebugInfo: (info: string) => void }> = ({ modelPath, setDebugInfo }) => {
+const Model: React.FC<{ modelPath: string }> = ({ modelPath }) => {
     const fbx = useFBX(modelPath);
-
-    useEffect(() => {
-        if (fbx) {
-            try {
-                // Calculate bounding box
-                const box = new THREE.Box3().setFromObject(fbx);
-                const size = box.getSize(new THREE.Vector3());
-                const center = box.getCenter(new THREE.Vector3());
-
-                setDebugInfo(`Loaded! Size: ${size.x.toFixed(2)}, ${size.y.toFixed(2)}, ${size.z.toFixed(2)}`);
-
-                // Auto-center
-                fbx.position.x = -center.x;
-                fbx.position.y = -center.y;
-                fbx.position.z = -center.z;
-
-                // Auto-scale to fit in a 5x5x5 box
-                const maxDim = Math.max(size.x, size.y, size.z);
-                if (maxDim > 0) {
-                    const scale = 5 / maxDim;
-                    fbx.scale.set(scale, scale, scale);
-                }
-
-                // Force bright material for debugging
-                const debugMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x00ff00, // Bright Green
-                    side: THREE.DoubleSide,
-                    roughness: 0.5,
-                    metalness: 0.5
-                });
-
-                fbx.traverse((child: any) => {
-                    if (child.isMesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                        child.material = debugMaterial; // OVERRIDE MATERIAL
-                    }
-                });
-            } catch (e: any) {
-                setDebugInfo(`Error processing model: ${e.message}`);
-            }
-        }
-    }, [fbx, setDebugInfo]);
-
     return <primitive object={fbx} />;
 };
 
 export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemName, onClose }) => {
-    const [debugInfo, setDebugInfo] = useState<string>("Loading...");
-
     return (
         <div style={{
             position: 'fixed',
@@ -99,39 +52,25 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                     }}>
                         {itemName}
                     </p>
-                    <p style={{ color: 'yellow', fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                        DEBUG: {debugInfo}
-                    </p>
                 </div>
                 <button onClick={onClose} style={{
                     background: 'transparent',
                     border: '1px solid #ff0055',
                     color: '#ff0055',
                     padding: '8px',
+                    cursor: 'pointer'
                 }}>
                     <X size={20} />
                 </button>
             </div>
 
             <div style={{ flex: 1, position: 'relative' }}>
-                <Canvas camera={{ position: [5, 5, 5], fov: 45 }} style={{ background: '#0a0a0a' }}>
+                <Canvas shadows dpr={[1, 2]} camera={{ fov: 50 }} style={{ background: '#0a0a0a' }}>
                     <Suspense fallback={null}>
-                        <ambientLight intensity={1} />
-                        <directionalLight position={[10, 10, 10]} intensity={2} />
-                        <directionalLight position={[-10, -10, -10]} intensity={1} />
-                        <pointLight position={[0, 10, 0]} intensity={1} />
-
-                        <Model modelPath={modelPath} setDebugInfo={setDebugInfo} />
-
-                        <OrbitControls
-                            enableZoom={true}
-                            enablePan={true}
-                            minDistance={2}
-                            maxDistance={20}
-                            target={[0, 0, 0]}
-                        />
-
-                        <gridHelper args={[20, 20, '#00f3ff', '#333']} position={[0, -2.5, 0]} />
+                        <Stage environment="city" intensity={0.6}>
+                            <Model modelPath={modelPath} />
+                        </Stage>
+                        <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 1.75} />
                     </Suspense>
                 </Canvas>
 
@@ -147,7 +86,8 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                     color: '#00f3ff',
                     fontSize: '0.9rem',
                     display: 'flex',
-                    gap: '30px'
+                    gap: '30px',
+                    pointerEvents: 'none'
                 }}>
                     <span>🖱️ DRAG TO ROTATE</span>
                     <span>🔍 SCROLL TO ZOOM</span>
