@@ -11,6 +11,27 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
+const compressImage = async (file: File): Promise<Blob> => {
+    return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+        const img = new Image();
+        img.onload = () => {
+            const maxWidth = 300;
+            let { width, height } = img;
+            if (width > maxWidth) {
+                height = (height * maxWidth) / width;
+                width = maxWidth;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => resolve(blob!), 'image/jpeg', 0.7);
+        };
+        img.src = URL.createObjectURL(file);
+    });
+};
+
 interface UserProfileProps {
     onClose: () => void;
 }
@@ -54,8 +75,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
         try {
             let avatarUrl = user.profile.avatarUrl;
             if (selectedFile) {
+                const compressedBlob = await compressImage(selectedFile);
                 const storageRef = ref(storage, `avatars/${user.uid}`);
-                await uploadBytes(storageRef, selectedFile);
+                await uploadBytes(storageRef, compressedBlob);
                 avatarUrl = await getDownloadURL(storageRef);
             }
             const userDocRef = doc(db, 'users', user.uid);

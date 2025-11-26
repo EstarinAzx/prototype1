@@ -78,11 +78,31 @@ export const ItemModal: React.FC<ItemModalProps> = ({ item, onClose }) => {
                                 ¥ {item.price.toLocaleString()}
                             </div>
                             <button
-                                className="cyber-btn"
-                                style={{ width: 'auto', padding: '15px 40px' }}
                                 onClick={() => {
                                     addToCart(item);
                                     onClose();
+                                }}
+                                style={{
+                                    background: 'linear-gradient(180deg, #fcee0a 0%, #d4c800 100%)',
+                                    border: 'none',
+                                    color: '#000',
+                                    padding: '15px 40px',
+                                    fontFamily: 'Orbitron, sans-serif',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 700,
+                                    letterSpacing: '2px',
+                                    cursor: 'pointer',
+                                    clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
+                                    transition: 'all 0.3s',
+                                    boxShadow: '0 0 20px rgba(252,238,10,0.3)'
+                                }}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.boxShadow = '0 0 30px rgba(252,238,10,0.5)';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.boxShadow = '0 0 20px rgba(252,238,10,0.3)';
+                                    e.currentTarget.style.transform = 'translateY(0)';
                                 }}
                             >
                                 PURCHASE
