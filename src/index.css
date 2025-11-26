@@ -19,8 +19,19 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  cursor: crosshair;
+  cursor: url('/cursor_small.png') 0 0, auto;
   /* Gaming feel */
+}
+
+/* Pointer cursor for clickable elements */
+button,
+a,
+input[type="button"],
+input[type="submit"],
+select,
+[role="button"],
+.clickable {
+  cursor: url('/pointer_small.png') 0 0, pointer !important;
 }
 
 body {
@@ -945,6 +956,28 @@ select:focus {
 }
 
 select option {
-  background-color: var(--bg-panel);
-  color: var(--text-main);
+  background-color: var(--bg-panel) !important;
+  color: var(--text-main) !important;
+  padding: 10px;
+  font-family: var(--font-display);
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+  background: linear-gradient(90deg, rgba(0, 243, 255, 0.2), rgba(0, 243, 255, 0.1)) !important;
+  color: var(--neon-cyan) !important;
+  box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+select option:checked {
+  background-color: rgba(0, 243, 255, 0.2) !important;
+  color: var(--neon-cyan) !important;
+  font-weight: bold;
+}
+
+/* Additional override for webkit browsers */
+select option::selection {
+  background-color: rgba(0, 243, 255, 0.3);
+  color: var(--neon-cyan);
 }

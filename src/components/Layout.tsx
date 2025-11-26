@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CustomSelect } from './CustomSelect';
 import { useStore } from '../context/StoreContext';
 import { ProductGrid } from './ProductGrid';
 import { CartSidebar } from './CartSidebar';
@@ -208,21 +209,16 @@ export const Layout: React.FC = () => {
 
                     <div style={{ marginTop: '20px' }}>
                         <div style={{ color: '#666', marginBottom: '10px', fontSize: '0.8rem' }}>SORT BY</div>
-                        <select
-                            onChange={(e) => setSortBy(e.target.value as any)}
-                            style={{
-                                width: '100%',
-                                background: '#0a0a0a',
-                                color: '#00f3ff',
-                                border: '1px solid #333',
-                                padding: '5px'
-                            }}
-                        >
-                            <option value="">DEFAULT</option>
-                            <option value="price-asc">PRICE: LOW TO HIGH</option>
-                            <option value="price-desc">PRICE: HIGH TO LOW</option>
-                            <option value="name">NAME</option>
-                        </select>
+                        <CustomSelect
+                            options={[
+                                { value: '', label: 'DEFAULT' },
+                                { value: 'price-asc', label: 'PRICE: LOW TO HIGH' },
+                                { value: 'price-desc', label: 'PRICE: HIGH TO LOW' },
+                                { value: 'name', label: 'NAME' }
+                            ]}
+                            value={useStore().sortBy || ''}
+                            onChange={(value) => setSortBy(value as any)}
+                        />
                     </div>
 
                     <div className="nav-decoration">
