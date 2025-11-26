@@ -19,17 +19,22 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         { id: 'gear', label: 'TACTICAL GEAR', icon: Box, type: 'gear' }
     ];
 
-    const handleEquip = (item: Item) => {
-        if (item.type === 'weapon') {
-            if (!user.loadout.primary) equipItem(item, 'primary');
-            else equipItem(item, 'secondary');
-        } else if (item.type === 'implant') {
-            equipItem(item, 'implant');
-        } else if (item.type === 'gear') {
-            if (item.name.includes('ARMOR') || item.name.includes('PLATE')) equipItem(item, 'armor');
-            else equipItem(item, 'gear');
-        }
-    };
+    // Group identical items for display
+    const groupedInventory = React.useMemo(() => {
+        if (!user) return [];
+        const grouped = new Map<string, { item: Item; count: number }>();
+        
+        user.inventory.forEach(item => {
+            const existing = grouped.get(String(item.id));
+            if (existing) {
+                existing.count++;
+            } else {
+                grouped.set(String(item.id), { item, count: 1 });
+            }
+        });
+        
+        return Array.from(grouped.values());
+    }, [user?.inventory]);
 
     return (
         <div className="modal-overlay" style={{
@@ -190,11 +195,21 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
                         gap: '12px'
                     }}>
-                        {user.inventory.map((item, index) => (
+                        {groupedInventory.map(({ item, count }) => (
                             <motion.div
-                                key={`${item.id}-${index}`}
+                                key={`inv-item-${item.id}`}
                                 whileHover={{ scale: 1.03, borderColor: '#00f0ff' }}
-                                onClick={() => handleEquip(item)}
+                                onClick={() => {
+                                    if (item.type === 'weapon') {
+                                        if (!user.loadout.primary) equipItem(item, 'primary');
+                                        else equipItem(item, 'secondary');
+                                    } else if (item.type === 'implant') {
+                                        equipItem(item, 'implant');
+                                    } else if (item.type === 'gear') {
+                                        if (item.name.includes('ARMOR') || item.name.includes('PLATE')) equipItem(item, 'armor');
+                                        else equipItem(item, 'gear');
+                                    }
+                                }}
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(20, 25, 35, 0.9) 0%, rgba(15, 18, 25, 0.8) 100%)',
                                     border: '1px solid rgba(0, 240, 255, 0.2)',
@@ -208,6 +223,25 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 }}
                                 className={`rarity-${item.rarity}`}
                             >
+                                {/* Quantity Badge */}
+                                {count > 1 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '5px',
+                                        right: '5px',
+                                        background: '#fcee0a',
+                                        color: '#000',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 'bold',
+                                        padding: '2px 6px',
+                                        borderRadius: '2px',
+                                        zIndex: 5,
+                                        fontFamily: 'Orbitron'
+                                    }}>
+                                        x{count}
+                                    </div>
+                                )}
+
                                 <div style={{
                                     width: '100%',
                                     height: '55%',

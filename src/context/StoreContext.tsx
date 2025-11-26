@@ -253,6 +253,27 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
 
     const equipItem = (item: Item, slot: keyof Loadout) => {
         if (!user) return;
+
+        // Check if item is already equipped in another slot
+        const currentlyEquippedSlots = Object.entries(user.loadout)
+            .filter(([key, value]) => value?.id === item.id && key !== slot);
+
+        // Count total quantity of this item in inventory
+        const totalQuantity = user.inventory.filter(i => i.id === item.id).length;
+
+        // If it's already equipped somewhere else, we need to check if we have enough quantity
+        if (currentlyEquippedSlots.length > 0) {
+            const alreadyEquippedCount = currentlyEquippedSlots.length;
+            
+            // If we don't have more items than what's already equipped, we can't equip another one
+            if (totalQuantity <= alreadyEquippedCount) {
+                soundManager.playError();
+                // Ideally we'd show a notification here, but for now the error sound indicates failure
+                console.log('Not enough quantity to equip another instance');
+                return;
+            }
+        }
+
         const updatedLoadout = { ...user.loadout, [slot]: item };
         setUser({ ...user, loadout: updatedLoadout });
         soundManager.playClick();
