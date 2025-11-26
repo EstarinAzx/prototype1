@@ -199,7 +199,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                 }}>
                                     LVL {user.profile.level}
                                 </span>
-                                <span style={{ color: '#888', fontFamily: 'Rajdhani, sans-serif', fontSize: '1rem' }}>
+                                <span style={{ color: '#888', fontFamily: 'Orbitron, sans-serif', fontSize: '1rem' }}>
                                     {currentAvatar.name}
                                 </span>
                             </div>
@@ -326,7 +326,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                             <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
                         </label>
                         {selectedFile && (
-                            <div style={{ marginTop: '-10px', marginBottom: '20px', fontFamily: 'Rajdhani, sans-serif', color: '#00f0ff', fontSize: '0.9rem' }}>
+                            <div style={{ marginTop: '-10px', marginBottom: '20px', fontFamily: 'Orbitron, sans-serif', color: '#00f0ff', fontSize: '0.9rem' }}>
                                 ✓ Selected: {selectedFile.name}
                             </div>
                         )}
@@ -444,7 +444,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                         border: '1px solid rgba(0,240,255,0.3)',
                                         color: '#fff',
                                         padding: '15px',
-                                        fontFamily: 'Rajdhani, sans-serif',
+                                        fontFamily: 'Orbitron, sans-serif',
                                         fontSize: '1rem',
                                         resize: 'none',
                                         outline: 'none'
@@ -475,7 +475,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                 background: 'rgba(0,240,255,0.03)',
                                 border: '1px solid rgba(255,255,255,0.1)',
                                 padding: '18px',
-                                fontFamily: 'Rajdhani, sans-serif',
+                                fontFamily: 'Orbitron, sans-serif',
                                 fontSize: '1rem',
                                 color: '#aaa',
                                 minHeight: '60px'
@@ -574,7 +574,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                                             {achievement.name}
                                         </div>
                                         <div style={{
-                                            fontFamily: 'Rajdhani, sans-serif',
+                                            fontFamily: 'Orbitron, sans-serif',
                                             fontSize: '0.8rem',
                                             color: '#777'
                                         }}>

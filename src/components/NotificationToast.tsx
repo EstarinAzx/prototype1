@@ -70,7 +70,7 @@ export const NotificationToast: React.FC<NotificationToastProps> = ({ notificati
                     SYSTEM_MSG // {type.toUpperCase()}
                 </div>
                 <div style={{
-                    fontFamily: 'Rajdhani',
+                    fontFamily: 'Orbitron',
                     fontSize: '1rem',
                     color: '#fff',
                     lineHeight: '1.2'

@@ -149,7 +149,7 @@ export const Login: React.FC = () => {
                                 border: '1px solid #333',
                                 padding: '15px',
                                 color: '#fff',
-                                fontFamily: 'Rajdhani',
+                                fontFamily: 'Orbitron',
                                 fontSize: '1.2rem',
                                 outline: 'none'
                             }}
@@ -174,7 +174,7 @@ export const Login: React.FC = () => {
                                 border: '1px solid #333',
                                 padding: '15px',
                                 color: '#fff',
-                                fontFamily: 'Rajdhani',
+                                fontFamily: 'Orbitron',
                                 fontSize: '1.2rem',
                                 outline: 'none'
                             }}
@@ -225,7 +225,7 @@ export const Login: React.FC = () => {
                             color: '#00f3ff',
                             cursor: 'pointer',
                             textDecoration: 'underline',
-                            fontFamily: 'Rajdhani',
+                            fontFamily: 'Orbitron',
                             fontSize: '1rem'
                         }}
                     >

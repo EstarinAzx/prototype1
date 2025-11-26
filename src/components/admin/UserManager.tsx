@@ -160,7 +160,7 @@ export const UserManager: React.FC = () => {
                 padding: '15px',
                 background: 'rgba(0, 243, 255, 0.05)',
                 border: '1px solid #333',
-                fontFamily: 'Rajdhani',
+                fontFamily: 'Orbitron',
                 color: '#666'
             }}>
                 <strong style={{ color: '#00f3ff' }}>Total Users:</strong> {users.length}
@@ -180,7 +180,7 @@ const tableHeaderStyle: React.CSSProperties = {
 
 const tableCellStyle: React.CSSProperties = {
     padding: '15px',
-    fontFamily: 'Rajdhani',
+    fontFamily: 'Orbitron',
     fontSize: '1rem',
     color: '#e0e0e0'
 };

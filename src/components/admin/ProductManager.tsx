@@ -309,7 +309,7 @@ export const ProductManager: React.FC = () => {
                                 ) : (
                                     <Upload size={30} color="#666" />
                                 )}
-                                <span style={{ color: '#666', fontFamily: 'Rajdhani' }}>
+                                <span style={{ color: '#666', fontFamily: 'Orbitron' }}>
                                     {imagePreview ? 'Click to change' : 'Upload Product Image'}
                                 </span>
                                 <input
@@ -409,7 +409,7 @@ const tableHeaderStyle: React.CSSProperties = {
 
 const tableCellStyle: React.CSSProperties = {
     padding: '15px',
-    fontFamily: 'Rajdhani',
+    fontFamily: 'Orbitron',
     fontSize: '1rem',
     color: '#e0e0e0',
     verticalAlign: 'middle'
@@ -432,7 +432,7 @@ const inputStyle: React.CSSProperties = {
     border: '1px solid #333',
     color: '#fff',
     padding: '10px',
-    fontFamily: 'Rajdhani',
+    fontFamily: 'Orbitron',
     fontSize: '1rem',
     outline: 'none'
 };

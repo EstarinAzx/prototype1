@@ -161,7 +161,7 @@ export const Analytics: React.FC = () => {
                                         #{index + 1}
                                     </span>
                                     <span style={{
-                                        fontFamily: 'Rajdhani',
+                                        fontFamily: 'Orbitron',
                                         fontSize: '1.1rem',
                                         color: '#e0e0e0'
                                     }}>
@@ -179,7 +179,7 @@ export const Analytics: React.FC = () => {
                         ))}
                     </div>
                 ) : (
-                    <div style={{ color: '#666', fontFamily: 'Rajdhani', textAlign: 'center', padding: '20px' }}>
+                    <div style={{ color: '#666', fontFamily: 'Orbitron', textAlign: 'center', padding: '20px' }}>
                         No transaction data available yet.
                     </div>
                 )}

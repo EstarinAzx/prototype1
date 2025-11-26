@@ -65,7 +65,7 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                         3D MODEL VIEWER
                     </h2>
                     <p style={{
-                        fontFamily: 'Rajdhani',
+                        fontFamily: 'Orbitron',
                         color: '#666',
                         fontSize: '1rem'
                     }}>
@@ -101,7 +101,7 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                     background: 'rgba(0, 243, 255, 0.1)',
                     border: '1px solid #4ade80',
                     padding: '15px 30px',
-                    fontFamily: 'Rajdhani',
+                    fontFamily: 'Orbitron',
                     color: '#4ade80',
                     fontSize: '0.9rem',
                     display: 'flex',

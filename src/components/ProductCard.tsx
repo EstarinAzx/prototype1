@@ -136,7 +136,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onSelect }) => {
 
                 {/* Type */}
                 <div style={{
-                    fontFamily: 'Rajdhani',
+                    fontFamily: 'Orbitron',
                     fontSize: '0.85rem',
                     color: '#888',
                     textTransform: 'uppercase',
