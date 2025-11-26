@@ -531,7 +531,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                             gap: '10px'
                         }}>
                             <Trophy size={20} />
-                            ACHIEVEMENTS ({user.profile.achievements.length}/{achievements.length})
+                            ACHIEVEMENTS ({user.profile.achievements?.length || 0}/{achievements.length})
                         </h3>
                         <div style={{
                             display: 'grid',
@@ -539,7 +539,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                             gap: '15px'
                         }}>
                             {achievements.map(achievement => {
-                                const isUnlocked = user.profile.achievements.includes(achievement.id);
+                                const isUnlocked = user.profile.achievements?.includes(achievement.id) || false;
                                 const rarityColor = getRarityColor(achievement.rarity);
 
                                 return (
