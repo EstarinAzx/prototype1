@@ -198,6 +198,8 @@ body {
   padding-right: 10px;
   scrollbar-width: thin;
   scrollbar-color: var(--neon-cyan) var(--bg-dark);
+  align-items: start;
+  align-content: start;
 }
 
 /* Scrollbar styling */
