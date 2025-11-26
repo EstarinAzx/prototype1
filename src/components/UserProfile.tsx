@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useStore } from '../context/StoreContext';
+import { useNotification } from '../context/NotificationContext';
 import { motion } from 'framer-motion';
 import { X, Edit2, Trophy, Star, Upload } from 'lucide-react';
 import { avatars } from '../data/avatars';
@@ -15,6 +17,7 @@ interface UserProfileProps {
 
 export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
     const { user, updateProfile } = useStore();
+    const { showNotification } = useNotification();
     const [isEditingBio, setIsEditingBio] = useState(false);
     const [bioText, setBioText] = useState(user?.profile.bio || '');
     const [selectedAvatar, setSelectedAvatar] = useState(user?.profile.avatar || 'netrunner');
@@ -35,12 +38,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
         if (file) {
             // Validate file type
             if (!file.type.startsWith('image/')) {
-                alert('Please select a valid image file');
+                showNotification('Please select a valid image file', 'error');
                 return;
             }
             // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                alert('File size must be less than 5MB');
+                showNotification('File size must be less than 5MB', 'error');
                 return;
             }
             setSelectedFile(file);
@@ -83,10 +86,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
             setSelectedFile(null);
             setIsEditingBio(false);
             
-            alert('Profile updated successfully!');
+            showNotification('Profile updated successfully!', 'success');
         } catch (error: any) {
             console.error('Error updating profile:', error);
-            alert(`Failed to update profile: ${error.message}`);
+            showNotification(`Failed to update profile: ${error.message}`, 'error');
         } finally {
             setIsSaving(false);
         }
@@ -96,7 +99,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
     const currentAvatar = avatars.find(a => a.id === user.profile.avatar) || avatars[0];
     const xpProgress = (user.profile.xp % 1000) / 1000 * 100;
 
-    return (
+    return createPortal(
         <div style={{
             position: 'fixed',
             top: 0,
@@ -574,7 +577,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                     </div>
                 </div>
             </motion.div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
