@@ -37,7 +37,7 @@ export const Layout: React.FC = () => {
             <header className="cyber-header">
                 <div className="brand">
                     <span className="glitch" data-text="CYBER_MARKET">CYBER_MARKET</span>
-                    <span className="version">SYS.VER.3.0.REACT</span>
+                    <span className="version">v1.0.0</span>
                 </div>
 
                 <div className="search-bar" style={{ flex: 1, margin: '0 20px', position: 'relative', maxWidth: '500px' }}>

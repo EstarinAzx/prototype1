@@ -59,7 +59,10 @@ select,
 body {
   background-color: var(--bg-dark);
   color: var(--text-main);
-  font-family: var(--font-body);
+  font-family: var(--font-display);
+  /* Changed to Orbitron for everything */
+  font-size: 22px;
+  /* Increased to ~35% larger than default 16px */
   height: 100vh;
   overflow: hidden;
   background-image:
@@ -330,16 +333,26 @@ body::before {
   }
 }
 
-/* --- Layout --- */
+/* --- App Container --- */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 20px;
-  max-width: 1600px;
-  margin: 0 auto;
+  overflow: hidden;
   position: relative;
-  z-index: 1;
+  z-index: 10;
+  /* Apply 160% scale to match user's zoomed view */
+  transform: scale(1.6);
+  transform-origin: top center;
+  /* Center the scaling */
+  width: 62.5%;
+  /* 100% / 1.6 */
+  height: 62.5vh;
+  /* 100vh / 1.6 */
+  margin: 0 auto;
+  /* Center horizontally */
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  /* Add shadow to frame it */
 }
 
 /* --- Header --- */
