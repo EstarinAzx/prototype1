@@ -1,0 +1,161 @@
+/* ========================================
+   TERMINAL PANEL SYSTEM
+   ======================================== */
+
+/* Base terminal panel */
+.terminal-panel {
+    background: rgba(17, 17, 17, 0.9);
+    border: 1px solid var(--border-terminal);
+    padding: 20px;
+    position: relative;
+}
+
+/* Terminal panel with header */
+.terminal-panel-header {
+    border-bottom: 1px solid var(--border-terminal);
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: var(--terminal-green-bright);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Corner brackets for terminal panels */
+.terminal-panel::before,
+.terminal-panel::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: var(--terminal-green-bright);
+    border-style: solid;
+}
+
+.terminal-panel::before {
+    top: 4px;
+    left: 4px;
+    border-width: 1px 0 0 1px;
+}
+
+.terminal-panel::after {
+    bottom: 4px;
+    right: 4px;
+    border-width: 0 1px 1px 0;
+}
+
+/* Section labels with bracket notation */
+.terminal-label {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--terminal-green);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.terminal-label::before {
+    content: '[ ';
+    color: var(--terminal-cyan);
+}
+
+.terminal-label::after {
+    content: ' ]';
+    color: var(--terminal-cyan);
+}
+
+/* Terminal-style buttons */
+.terminal-button {
+    background: transparent;
+    border: 1px solid var(--border-terminal-bright);
+    color: var(--terminal-green-bright);
+    padding: 8px 20px;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.terminal-button:hover {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: var(--terminal-green-bright);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+.terminal-button:active {
+    background: rgba(34, 197, 94, 0.2);
+}
+
+/* Terminal-style input fields */
+.terminal-input {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-terminal);
+    color: var(--terminal-green-bright);
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.terminal-input:focus {
+    outline: none;
+    border-color: var(--terminal-green-bright);
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.3);
+}
+
+/* Boxed stat display */
+.terminal-stat {
+    border: 1px solid var(--border-terminal);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.terminal-stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.terminal-stat-value {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--terminal-green-bright);
+    font-weight: bold;
+}
+
+/* Terminal grid layout */
+.terminal-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.terminal-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.terminal-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.terminal-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .terminal-grid-2,
+    .terminal-grid-3,
+    .terminal-grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
