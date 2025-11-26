@@ -1,4 +1,5 @@
 import React, { Suspense, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useFBX, Stage } from '@react-three/drei';
 import { X } from 'lucide-react';
@@ -33,7 +34,7 @@ const Model: React.FC<{ modelPath: string }> = ({ modelPath }) => {
 };
 
 export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemName, onClose }) => {
-    return (
+    return createPortal(
         <div style={{
             position: 'fixed',
             top: 0,
@@ -85,7 +86,7 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
             <div style={{ flex: 1, position: 'relative' }}>
                 <Canvas shadows dpr={[1, 2]} camera={{ fov: 50 }} style={{ background: '#0a0a0a' }}>
                     <Suspense fallback={null}>
-                        <Stage environment="city" intensity={0.6}>
+                        <Stage environment="city" intensity={0.6} adjustCamera={true}>
                             <Model modelPath={modelPath} />
                         </Stage>
                         <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 1.75} />
@@ -111,6 +112,7 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                     <span>🔍 SCROLL TO ZOOM</span>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };

@@ -28,7 +28,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({ isOpen, 
                         exit={{ scale: 0.9, opacity: 0 }}
                         style={{
                             maxWidth: '700px',
-                            maxHeight: '80vh',
+                            maxHeight: '85%',
                             overflow: 'auto'
                         }}
                     >

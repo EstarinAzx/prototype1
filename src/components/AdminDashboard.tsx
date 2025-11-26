@@ -45,7 +45,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 style={{
                     width: '95%',
                     maxWidth: '1400px',
-                    height: '90vh',
+                    height: '90%',
                     background: '#0a0a0a',
                     border: '2px solid #ffe600',
                     boxShadow: '0 0 30px rgba(255, 230, 0, 0.3)',

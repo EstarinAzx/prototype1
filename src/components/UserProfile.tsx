@@ -47,7 +47,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
                 style={{
                     width: '95%',
                     maxWidth: '900px',
-                    maxHeight: '90vh',
+                    maxHeight: '90%',
                     background: 'rgba(10, 10, 10, 0.95)',
                     border: '1px solid #4ade80',
                     boxShadow: '0 0 50px rgba(74, 222, 128, 0.15), inset 0 0 20px rgba(74, 222, 128, 0.05)',

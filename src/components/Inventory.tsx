@@ -53,7 +53,7 @@ export const Inventory: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 style={{
                     width: '90%',
                     maxWidth: '1200px',
-                    height: '80vh',
+                    height: '90%',
                     background: '#0a0a0a',
                     border: '1px solid #4ade80',
                     display: 'flex',
