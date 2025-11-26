@@ -1,7 +1,8 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useFBX } from '@react-three/drei';
 import { X } from 'lucide-react';
+import * as THREE from 'three';
 
 interface Model3DViewerProps {
     modelPath: string;
@@ -9,31 +10,58 @@ interface Model3DViewerProps {
     onClose: () => void;
 }
 
-const Model: React.FC<{ modelPath: string }> = ({ modelPath }) => {
+const Model: React.FC<{ modelPath: string; setDebugInfo: (info: string) => void }> = ({ modelPath, setDebugInfo }) => {
     const fbx = useFBX(modelPath);
 
     useEffect(() => {
         if (fbx) {
-            fbx.traverse((child: any) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
-        }
-    }, [fbx]);
+            try {
+                // Calculate bounding box
+                const box = new THREE.Box3().setFromObject(fbx);
+                const size = box.getSize(new THREE.Vector3());
+                const center = box.getCenter(new THREE.Vector3());
 
-    return (
-        <primitive
-            object={fbx}
-            scale={0.008}
-            position={[0, -0.5, 0]}
-            rotation={[0, 0, 0]}
-        />
-    );
+                setDebugInfo(`Loaded! Size: ${size.x.toFixed(2)}, ${size.y.toFixed(2)}, ${size.z.toFixed(2)}`);
+
+                // Auto-center
+                fbx.position.x = -center.x;
+                fbx.position.y = -center.y;
+                fbx.position.z = -center.z;
+
+                // Auto-scale to fit in a 5x5x5 box
+                const maxDim = Math.max(size.x, size.y, size.z);
+                if (maxDim > 0) {
+                    const scale = 5 / maxDim;
+                    fbx.scale.set(scale, scale, scale);
+                }
+
+                // Force bright material for debugging
+                const debugMaterial = new THREE.MeshStandardMaterial({
+                    color: 0x00ff00, // Bright Green
+                    side: THREE.DoubleSide,
+                    roughness: 0.5,
+                    metalness: 0.5
+                });
+
+                fbx.traverse((child: any) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        child.material = debugMaterial; // OVERRIDE MATERIAL
+                    }
+                });
+            } catch (e: any) {
+                setDebugInfo(`Error processing model: ${e.message}`);
+            }
+        }
+    }, [fbx, setDebugInfo]);
+
+    return <primitive object={fbx} />;
 };
 
 export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemName, onClose }) => {
+    const [debugInfo, setDebugInfo] = useState<string>("Loading...");
+
     return (
         <div style={{
             position: 'fixed',
@@ -47,7 +75,6 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
             flexDirection: 'column',
             backdropFilter: 'blur(10px)'
         }}>
-            {/* Header */}
             <div style={{
                 padding: '20px 30px',
                 borderBottom: '1px solid #00f3ff',
@@ -72,47 +99,42 @@ export const Model3DViewer: React.FC<Model3DViewerProps> = ({ modelPath, itemNam
                     }}>
                         {itemName}
                     </p>
+                    <p style={{ color: 'yellow', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                        DEBUG: {debugInfo}
+                    </p>
                 </div>
-                <button
-                    onClick={onClose}
-                    style={{
-                        background: 'transparent',
-                        border: '1px solid #ff0055',
-                        color: '#ff0055',
-                        padding: '8px',
-                    }}
-                >
+                <button onClick={onClose} style={{
+                    background: 'transparent',
+                    border: '1px solid #ff0055',
+                    color: '#ff0055',
+                    padding: '8px',
+                }}>
                     <X size={20} />
                 </button>
             </div>
 
-            {/* 3D Canvas */}
             <div style={{ flex: 1, position: 'relative' }}>
-                <Canvas
-                    camera={{ position: [2, 1, 3], fov: 45 }}
-                    style={{ background: '#0a0a0a' }}
-                >
+                <Canvas camera={{ position: [5, 5, 5], fov: 45 }} style={{ background: '#0a0a0a' }}>
                     <Suspense fallback={null}>
-                        <ambientLight intensity={1.2} />
-                        <directionalLight position={[5, 5, 5]} intensity={2} castShadow />
-                        <directionalLight position={[-5, 3, -5]} intensity={1} />
-                        <pointLight position={[0, 5, 0]} intensity={0.8} />
+                        <ambientLight intensity={1} />
+                        <directionalLight position={[10, 10, 10]} intensity={2} />
+                        <directionalLight position={[-10, -10, -10]} intensity={1} />
+                        <pointLight position={[0, 10, 0]} intensity={1} />
 
-                        <Model modelPath={modelPath} />
+                        <Model modelPath={modelPath} setDebugInfo={setDebugInfo} />
 
                         <OrbitControls
                             enableZoom={true}
                             enablePan={true}
-                            minDistance={1}
-                            maxDistance={10}
+                            minDistance={2}
+                            maxDistance={20}
                             target={[0, 0, 0]}
                         />
 
-                        <gridHelper args={[5, 10, '#00f3ff', '#222']} position={[0, -0.5, 0]} />
+                        <gridHelper args={[20, 20, '#00f3ff', '#333']} position={[0, -2.5, 0]} />
                     </Suspense>
                 </Canvas>
 
-                {/* Instructions */}
                 <div style={{
                     position: 'absolute',
                     bottom: '20px',
